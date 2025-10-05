@@ -4,7 +4,7 @@ import {minify} from 'rollup-plugin-swc3';
 
 export default defineConfig([
 	{
-		input: 'src/index.ts',
+		input: 'lib/index.ts',
 		output: {
 			dir: 'dist',
 			format: 'es',
@@ -23,7 +23,7 @@ export default defineConfig([
 		tsconfig: 'tsconfig.json',
 	},
 	{
-		input: 'src/index.ts',
+		input: 'lib/index.ts',
 		output: {
 			dir: 'dist',
 			format: 'es',

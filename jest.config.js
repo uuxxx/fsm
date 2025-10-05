@@ -9,7 +9,7 @@ const config = {
 		'^.+\\.ts$': ['ts-jest', {tsconfig: './tsconfig.jest.json'}],
 	},
 	coverageDirectory: './coverage',
-	collectCoverageFrom: ['src/**/*.{ts,js}'],
+	collectCoverageFrom: ['lib/**/*.{ts,js}'],
 	testMatch: ['**/*.test.[jt]s'],
 
 };
