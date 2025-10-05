@@ -13,6 +13,8 @@ export default defineConfig([
 			'@typescript-eslint/no-unsafe-type-assertion': 'off',
 			'@typescript-eslint/no-unsafe-argument': 'off',
 			'@typescript-eslint/no-confusing-void-expression': 'off',
+			'@typescript-eslint/promise-function-async': 'off',
+
 		},
 	},
 	globalIgnores([

@@ -29,10 +29,21 @@ export const makeFsm = <TState extends Label, TTransitions extends Rec<Transitio
 
 			if (!guard.function(transition.to)) {
 				state = transition.to;
-				return;
+				return state;
 			}
 
-			state = transition.to(...args);
+			const value = transition.to(...args);
+
+			if (!guard.promise(value)) {
+				state = value;
+				return state;
+			}
+
+			return value
+				.then(resolvedValue => {
+					state = resolvedValue;
+					return state;
+				});
 		};
 
 		return acc;

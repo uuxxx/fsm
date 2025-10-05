@@ -24,6 +24,12 @@ const TRANSITIONS = {
 			return state;
 		},
 	},
+	'async goto': {
+		from: '*',
+		to(state: State) {
+			return Promise.resolve(state);
+		},
+	},
 } satisfies Rec<Transition<State>>;
 
 const INIT: State = 'a';
@@ -43,8 +49,9 @@ describe('transitions', () => {
 
 	test('a -> b', () => {
 		const fsm = makeFsm(CONFIG);
-		fsm['a -> b']();
+		const state = fsm['a -> b']();
 		expect(fsm.state()).toBe('b');
+		expect(state).toBe('b');
 	});
 
 	test('b -> a', () => {
@@ -53,14 +60,23 @@ describe('transitions', () => {
 			init: 'b',
 		});
 
-		fsm['b -> a']();
+		const state = fsm['b -> a']();
 		expect(fsm.state()).toBe('a');
+		expect(state).toBe('a');
 	});
 
 	test('goto', () => {
 		const fsm = makeFsm(CONFIG);
-		fsm.goto('d');
+		const state = fsm.goto('d');
 		expect(fsm.state()).toBe('d');
+		expect(state).toBe('d');
+	});
+
+	test('async goto', async () => {
+		const fsm = makeFsm(CONFIG);
+		const state = await fsm['async goto']('b');
+		expect(state).toBe('b');
+		expect(fsm.state()).toBe('b');
 	});
 
 	test('[b, c, d] -> a', () => {
@@ -70,8 +86,9 @@ describe('transitions', () => {
 				init,
 			});
 
-			fsm['[b, c, d] -> a']();
+			const state = fsm['[b, c, d] -> a']();
 			expect(fsm.state()).toBe('a');
+			expect(state).toBe('a');
 		}
 	});
 
