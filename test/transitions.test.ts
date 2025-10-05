@@ -1,30 +1,30 @@
+import type {Rec} from '../lib/utils';
 import {makeFsm} from '../lib';
 import type {Config} from '../lib/types/Config';
-import type {Transition as TransitionLib} from '../lib/types/Transition';
+import type {Transition} from '../lib/types/Transition';
 
 type State = 'a' | 'b' | 'c' | 'd';
 
-type Transition = 'a -> b' | 'b -> a' | 'goto';
-
-const TRANSITIONS = [
-	{
-		name: 'a -> b',
+const TRANSITIONS = {
+	'a -> b': {
 		from: 'a',
 		to: 'b',
 	},
-	{
-		name: 'b -> a',
+	'b -> a': {
 		from: 'b',
 		to: 'a',
 	},
-	{
-		name: 'goto',
+	'[b, c, d] -> a': {
+		from: ['b', 'c', 'd'],
+		to: 'a',
+	},
+	goto: {
 		from: '*',
 		to(state: State) {
 			return state;
 		},
 	},
-] satisfies Array<TransitionLib<State, Transition>>;
+} satisfies Rec<Transition<State>>;
 
 const INIT: State = 'a';
 
@@ -61,6 +61,18 @@ describe('transitions', () => {
 		const fsm = makeFsm(CONFIG);
 		fsm.goto('d');
 		expect(fsm.state()).toBe('d');
+	});
+
+	test('[b, c, d] -> a', () => {
+		for (const init of ['b', 'c', 'd']) {
+			const fsm = makeFsm({
+				...CONFIG,
+				init,
+			});
+
+			fsm['[b, c, d] -> a']();
+			expect(fsm.state()).toBe('a');
+		}
 	});
 
 	test('invalid', () => {

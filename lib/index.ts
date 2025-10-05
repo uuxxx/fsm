@@ -5,9 +5,9 @@ import type {Methods} from './types/Methods';
 import type {StateMethods} from './types/StateMethods';
 import type {Transition} from './types/Transition';
 import type {TransitionMethods} from './types/TransitionMethods';
-import {guard, type AnyFn} from './utils';
+import {guard, type AnyFn, type Rec} from './utils';
 
-export const makeFsm = <TState extends Label, TTransitions extends Array<Transition<TState, Label>>>(config: Config<TState, TTransitions>): Methods<TState, TTransitions> => {
+export const makeFsm = <TState extends Label, TTransitions extends Rec<Transition<TState>>>(config: Config<TState, TTransitions>): Methods<TState, TTransitions> => {
 	let state: TState = config.init;
 
 	const stateMethods: StateMethods<TState> = {
@@ -15,22 +15,24 @@ export const makeFsm = <TState extends Label, TTransitions extends Array<Transit
 		allStates: () => [...config.states],
 	};
 
-	const transitionMethods = config.transitions.reduce((acc, item) => {
-		(acc as Record<Label, AnyFn>)[item.name] = (...args: any[]) => {
-			if (item.from !== '*' && item.from !== state) {
+	const transitionMethods = Object.entries(config.transitions).reduce((acc, [name, transition]) => {
+		(acc as Rec<AnyFn>)[name] = (...args: any[]) => {
+			const isErr = guard.array(transition.from) ? !transition.from.includes(state) : transition.from !== '*' && transition.from !== state;
+
+			if (isErr) {
 				error.transitionForbidden({
 					state,
-					from: item.from,
-					name: item.name,
+					from: transition.from,
+					name,
 				});
 			}
 
-			if (!guard.function(item.to)) {
-				state = item.to;
+			if (!guard.function(transition.to)) {
+				state = transition.to;
 				return;
 			}
 
-			state = item.to(...args);
+			state = transition.to(...args);
 		};
 
 		return acc;
