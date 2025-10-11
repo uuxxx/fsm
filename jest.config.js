@@ -6,7 +6,10 @@ const config = {
 	moduleFileExtensions: ['js', 'ts'],
 	rootDir: '.',
 	transform: {
-		'^.+\\.ts$': ['ts-jest', {tsconfig: './tsconfig.jest.json'}],
+		'^.+\\.ts$': ['ts-jest', {
+			tsconfig:
+			'./tsconfig.jest.json',
+		}],
 	},
 	coverageDirectory: './coverage',
 	collectCoverageFrom: ['lib/**/*.{ts,js}'],
