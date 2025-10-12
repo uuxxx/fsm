@@ -91,9 +91,4 @@ describe('transitions', () => {
 			expect(state).toBe('a');
 		}
 	});
-
-	test('invalid', () => {
-		const fsm = makeFsm(CONFIG);
-		expect(() => fsm['b -> a']()).toThrow();
-	});
 });

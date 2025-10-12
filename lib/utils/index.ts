@@ -9,3 +9,4 @@ export type {EmptyArray} from './types/EmptyArray';
 export type {Entries} from './types/Entries';
 export {guard} from './lib/guard';
 export {noop} from './lib/noop';
+export {wait} from './lib/wait';

@@ -8,11 +8,13 @@ import type {StateMethods} from './types/StateMethods';
 import type {Transition} from './types/Transition';
 import type {TransitionMethods} from './types/TransitionMethods';
 import {
-	guard, type AnyFn, type Entries, type Rec,
+	guard, type AnyFn, type Entries, type Rec, type Ulx,
 } from './utils';
 
 export const makeFsm = <TState extends Label, TTransitions extends Rec<Transition<TState>>>(config: Config<TState, TTransitions>): Methods<TState, TTransitions> => {
 	let state: TState = config.init;
+
+	let pending: Ulx<Label>;
 
 	const stateMethods: StateMethods<TState> = {
 		state: () => state,
@@ -33,6 +35,13 @@ export const makeFsm = <TState extends Label, TTransitions extends Rec<Transitio
 					state,
 					from: transition.from,
 					name,
+				});
+			}
+
+			if (pending) {
+				error.hasPendingTransition({
+					pending,
+					current: name,
 				});
 			}
 
@@ -74,8 +83,12 @@ export const makeFsm = <TState extends Label, TTransitions extends Rec<Transitio
 				return state;
 			}
 
+			pending = name;
+
 			return value
 				.then(resolvedValue => {
+					pending = undefined;
+
 					const lifecycle: Lifecycle<TState, Entries<TTransitions>> = {
 						transition: name,
 						from: state,
