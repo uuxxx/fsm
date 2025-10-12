@@ -1,1 +1,1 @@
-export type Rec<T = string> = Record<string, T>;
+export type Rec<T = unknown> = Record<string, T>;

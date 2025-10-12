@@ -14,5 +14,4 @@ const config = {
 	coverageDirectory: './coverage',
 	collectCoverageFrom: ['lib/**/*.{ts,js}'],
 	testMatch: ['**/*.test.[jt]s'],
-
 };

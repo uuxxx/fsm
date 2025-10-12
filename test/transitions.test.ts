@@ -83,7 +83,7 @@ describe('transitions', () => {
 		for (const init of ['b', 'c', 'd']) {
 			const fsm = makeFsm({
 				...CONFIG,
-				init,
+				init: init as State,
 			});
 
 			const state = fsm['[b, c, d] -> a']();

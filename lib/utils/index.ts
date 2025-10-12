@@ -1,4 +1,11 @@
 export type {AnyFn} from './types/AnyFn';
 export type {Noop} from './types/Noop';
 export type {Rec} from './types/Rec';
+export type {Key} from './types/Key';
+export type {Vdx} from './types/Vdx';
+export type {Ulx} from './types/Ulx';
+export type {Keyof} from './types/Keyof';
+export type {EmptyArray} from './types/EmptyArray';
+export type {Entries} from './types/Entries';
 export {guard} from './lib/guard';
+export {noop} from './lib/noop';

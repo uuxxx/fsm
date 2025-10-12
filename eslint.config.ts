@@ -14,7 +14,8 @@ export default defineConfig([
 			'@typescript-eslint/no-unsafe-argument': 'off',
 			'@typescript-eslint/no-confusing-void-expression': 'off',
 			'@typescript-eslint/promise-function-async': 'off',
-
+			'@typescript-eslint/consistent-type-assertions': 'off',
+			'capitalized-comments': 'off',
 		},
 	},
 	globalIgnores([
