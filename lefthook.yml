@@ -1,0 +1,28 @@
+#   https://lefthook.dev/configuration/
+
+pre-push:
+  parallel: true
+  jobs:
+    - name: types
+      run: npm run check:types
+
+    - name: lint
+      run: npm run lint
+    
+    - name: test
+      run: npm run test
+
+    - name: changeset
+      run: npm run check:changeset
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: types
+      run: npm run check:types
+
+    - name: lint
+      run: npm run lint
+    
+    - name: test
+      run: npm run test

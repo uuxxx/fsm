@@ -1,6 +1,7 @@
 /**
  * @type {import('jest').Config}
  */
+// eslint-disable-next-line
 const config = {
 	verbose: true,
 	moduleFileExtensions: ['js', 'ts'],
@@ -11,7 +12,5 @@ const config = {
 			'./tsconfig.jest.json',
 		}],
 	},
-	coverageDirectory: './coverage',
-	collectCoverageFrom: ['lib/**/*.{ts,js}'],
 	testMatch: ['**/*.test.[jt]s'],
 };

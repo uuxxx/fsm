@@ -1,29 +1,108 @@
-name: Node.js CI
+name: ci
 
 on: [push, pull_request]
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
-  build:
+  dependencies:
+    name: setup node & install deps
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x]
-
+    outputs:
+      cache-hit: ${{ steps.cache.outputs.cache-hit }}
     steps:
       - uses: actions/checkout@v5
-
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - &setup-node
+        name: node.js setup
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20.x
+          registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
-
-      - name: Install dependencies
+      - name: install dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build
+  changeset:
+    name: changeset
+    runs-on: ubuntu-latest
+    needs: dependencies
+    steps:
+      - uses: actions/checkout@v5
+      - *setup-node
+      - run: npm ci
+      - run: npm run check:changeset
 
-      - name: Test with coverage
-        run: npm run test:coverage
+  types:
+    name: types
+    runs-on: ubuntu-latest
+    needs: dependencies
+    steps:
+      - uses: actions/checkout@v5
+      - *setup-node
+      - run: npm ci
+      - run: npm run check:types
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    needs: dependencies
+    steps:
+      - uses: actions/checkout@v5
+      - *setup-node
+      - run: npm ci
+      - run: npm run lint
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    needs: dependencies
+    steps:
+      - uses: actions/checkout@v5
+      - *setup-node
+      - run: npm ci
+      - run: npm run test
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v5
+      - *setup-node
+      - run: npm ci
+      - run: npm run build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: dist
+
+  release:
+    name: publish
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 
+      - *setup-node
+      - run: npm ci
+
+      - name: git setup
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: bump
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm run version 
+          git add package.json CHANGELOG.md
+          git commit -m "chore: version packages [skip ci]"
+          git push origin main
+          npm run publish

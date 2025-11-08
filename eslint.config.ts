@@ -7,6 +7,9 @@ export default defineConfig([
 	config.filter((item: any) => !item?.language?.startsWith('json/')),
 	{
 		rules: {
+			'@typescript-eslint/no-unused-vars': ['error', {
+				argsIgnorePattern: '^_',
+			}],
 			'@typescript-eslint/no-unsafe-call': 'off',
 			'@typescript-eslint/no-unsafe-member-access': 'off',
 			'@typescript-eslint/naming-convention': 'off',

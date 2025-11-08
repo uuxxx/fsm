@@ -1,6 +1,6 @@
 import type {
 	AnyFn,
-	Entries, Key, Noop, Rec, Vdx,
+	Entries, Key, Rec, Vdx,
 } from '../utils';
 import type {Transition} from './Transition';
 import type {Label} from './Label';

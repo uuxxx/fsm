@@ -1,5 +1,5 @@
 # TODO
 
-[] - Plugins
+[ ] - Plugins
 
-[] - Error handling
+[ ] - Error handling

@@ -1,4 +1,4 @@
-import type {Noop, Rec} from '../utils';
+import type {Rec} from '../utils';
 import type {Transition} from './Transition';
 import type {Label} from './Label';
 
