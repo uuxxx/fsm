@@ -1,5 +1,0 @@
----
-"fsm": patch
----
-
-init

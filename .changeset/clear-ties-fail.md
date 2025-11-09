@@ -1,5 +1,0 @@
----
-"fsm": minor
----
-
-setup infrastructure
