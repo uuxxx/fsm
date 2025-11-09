@@ -1,6 +1,6 @@
 {
   "name": "@uuxxx/fsm",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "build": "rolldown -c rolldown.config.ts",
     "bump": "npx changeset add",
@@ -34,7 +34,11 @@
     "yarn": "Please use npm instead of yarn to install dependencies",
     "pnpm": "Please use npm instead of pnpm to install dependencies"
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "exports": {
     "types": "./dist/index.d.ts",
     "default": "./dist/index.js"
