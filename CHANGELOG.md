@@ -1,5 +1,11 @@
 # @uuxxx/fsm
 
+## 0.0.3
+
+### Patch Changes
+
+- 7d3aeab: setup infrastructure #3
+
 ## 0.0.2
 
 ### Patch Changes

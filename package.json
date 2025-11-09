@@ -1,6 +1,6 @@
 {
   "name": "@uuxxx/fsm",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": {
     "build": "rolldown -c rolldown.config.ts",
     "bump": "npx changeset add",
