@@ -1,6 +1,6 @@
 {
-  "name": "fsm",
-  "version": "0.1.2",
+  "name": "@uuxxx/fsm",
+  "version": "0.0.0",
   "scripts": {
     "build": "rolldown -c rolldown.config.ts",
     "bump": "npx changeset add",
@@ -15,13 +15,14 @@
   "author": "Artem Tryapichnikov <golysheeet@gmail.com>",
   "license": "MIT",
   "description": "Javascript library for creating finite state machine",
+  "homepage": "https://github.com/uuxxx/fsm/blob/main/README.md",
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/uuxxx/fsm"
+    "url": "git+https://github.com/uuxxx/fsm.git"
   },
   "keywords": [
     "finite state machine",
