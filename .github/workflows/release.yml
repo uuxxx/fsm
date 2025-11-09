@@ -50,6 +50,6 @@ jobs:
 
       - name: publish
         if: steps.version.outputs.no_changes == 'false'
-        run: npm run release
+        run: npm run publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
