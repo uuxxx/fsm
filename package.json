@@ -16,6 +16,9 @@
   "license": "MIT",
   "description": "Javascript library for creating finite state machine",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/uuxxx/fsm"
