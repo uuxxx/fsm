@@ -113,6 +113,14 @@ jobs:
         with:
           name: build
 
+      - name: Move build artifacts to root
+        run: |
+          if [ -d build ]; then
+            cp -r build/dist ./dist
+            cp build/package.json build/package-lock.json -t .
+            cp -r build/.changeset ./
+          fi
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
