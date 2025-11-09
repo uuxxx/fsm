@@ -63,7 +63,7 @@ jobs:
   test:
     name: Tests
     runs-on: ubuntu-latest
-    needs: [dependencies, lint, types, changeset]
+    needs: dependencies
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -76,7 +76,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: test
+    needs: [dependencies, lint, types, test, changeset]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -101,7 +101,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: github.event.pull_request.merged == true
+
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -116,9 +122,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Version packages
         id: version
@@ -141,4 +144,6 @@ jobs:
         if: steps.version.outputs.no_changes == 'false'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run publish
+
