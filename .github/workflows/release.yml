@@ -116,7 +116,7 @@ jobs:
       - name: Move build artifacts to root
         run: |
           if [ -d build ]; then
-            cp -r build/dist ./dist
+            cp -r build/dist/* ./
             cp build/package.json build/package-lock.json -t .
             cp -r build/.changeset ./
           fi
