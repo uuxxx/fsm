@@ -1,5 +1,11 @@
 # fsm
 
+## 0.1.2
+
+### Patch Changes
+
+- 2ca33fa: infra setup
+
 ## 0.1.1
 
 ### Patch Changes
