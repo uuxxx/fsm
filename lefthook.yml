@@ -8,12 +8,9 @@ pre-push:
 
     - name: lint
       run: npm run lint
-    
+
     - name: test
       run: npm run test
-
-    - name: changeset
-      run: npm run check:changeset
 
 pre-commit:
   parallel: true
@@ -23,6 +20,6 @@ pre-commit:
 
     - name: lint
       run: npm run lint
-    
+
     - name: test
       run: npm run test
