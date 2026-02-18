@@ -2,3 +2,7 @@
 dist
 node_modules
 coverage
+
+# misc
+pnpm-debug.log*
+.DS_Store
