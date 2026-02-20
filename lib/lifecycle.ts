@@ -2,12 +2,12 @@ import type {Label} from './types/Label';
 import type {Lifecycle, LifecycleMethods} from './types/LifecycleMethods';
 import type {Transition} from './types/Transition';
 import {
-	guard, type Entries, type Keyof, type Rec,
+	guard, type Entries, type KeyOf, type Rec,
 	type Ulx,
 } from './utils';
 
 type Invoke<TState extends Label, TTransitions extends Rec<Transition<TState>>>
-	= Required<Record<Keyof<LifecycleMethods<TState, TTransitions>>, (lifecycle: Lifecycle<TState, Entries<TTransitions>>) => {
+	= Required<Record<KeyOf<LifecycleMethods<TState, TTransitions>>, (lifecycle: Lifecycle<TState, Entries<TTransitions>>) => {
 		isOk: boolean;
 	}>>;
 
