@@ -3,6 +3,8 @@ import type {Label} from './Label';
 import type {StateMethods} from './StateMethods';
 import type {Transition} from './Transition';
 import type {TransitionMethods} from './TransitionMethods';
+import type {Plugin} from './Plugin';
+import type {PluginsMethods} from './PluginsMethods';
 
-export type Methods<TState extends Label, TTransitions extends Rec<Transition<TState>>>
-	= TransitionMethods<TTransitions> & StateMethods<TState>;
+export type Methods<TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>>
+	= TransitionMethods<TTransitions> & StateMethods<TState> & PluginsMethods<TState, TTransitions, TPlugins>;

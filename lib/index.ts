@@ -4,6 +4,8 @@ import type {Config} from './types/Config';
 import type {Label} from './types/Label';
 import type {Lifecycle} from './types/LifecycleMethods';
 import type {Methods} from './types/Methods';
+import type {Plugin} from './types/Plugin';
+import type {PluginsMethods} from './types/PluginsMethods';
 import type {StateMethods} from './types/StateMethods';
 import type {Transition} from './types/Transition';
 import type {TransitionMethods} from './types/TransitionMethods';
@@ -11,7 +13,8 @@ import {
 	guard, type AnyFn, type Entries, type Rec, type Ulx,
 } from './utils';
 
-export const makeFsm = <TState extends Label, TTransitions extends Rec<Transition<TState>>>(config: Config<TState, TTransitions>): Methods<TState, TTransitions> => {
+export const makeFsm = <TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>>
+(config: Config<TState, TTransitions, TPlugins>): Methods<TState, TTransitions, TPlugins> => {
 	let state: TState = config.init;
 
 	let pending: Ulx<Label>;
@@ -111,9 +114,12 @@ export const makeFsm = <TState extends Label, TTransitions extends Rec<Transitio
 		return acc;
 	}, {} as TransitionMethods<TTransitions>);
 
+	const pluginsMethods = {} as PluginsMethods<TState, TTransitions, TPlugins>;
+
 	return {
 		...transitionMethods,
 		...stateMethods,
+		...pluginsMethods,
 	};
 };
 
