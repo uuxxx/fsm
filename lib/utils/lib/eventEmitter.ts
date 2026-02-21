@@ -2,18 +2,20 @@ import type {AnyFn} from '../types/AnyFn';
 import type {KeyOf} from '../types/KeyOf';
 import type {Noop} from '../types/Noop';
 import type {Rec} from '../types/Rec';
+import type {ValueOf} from '../types/ValueOf';
+import {guard} from './guard';
 
-type EventMap = Rec<any[]>;
+type EventMap = Rec<AnyFn>;
 
-type EventEmitter<T extends EventMap> = {
-	listen: <K extends KeyOf<T>>(id: K, listener: (...args: T[K]) => void) => Noop;
+export type EventEmitter<T extends EventMap> = {
+	listen: <K extends KeyOf<T>>(id: K, listener: T[K]) => Noop;
 	unlisten: (id: KeyOf<T>, listener: Noop) => void;
-	emit: <K extends KeyOf<T>>(id: K, ...args: T[K]) => void;
+	emit: <K extends KeyOf<T>>(id: K, ...args: Parameters<T[K]>) => Array<ReturnType<T[K]>>;
 	unlistenAll: (id: KeyOf<T>) => void;
 };
 
 export const makeEventEmitter = <T extends EventMap>(): EventEmitter<T> => {
-	const map = new Map<KeyOf<T>, AnyFn[]>();
+	const map = new Map<KeyOf<T>, Array<ValueOf<T>>>();
 
 	return {
 		listen(id, listener) {
@@ -44,9 +46,8 @@ export const makeEventEmitter = <T extends EventMap>(): EventEmitter<T> => {
 			map.set(id, nextListeners);
 		},
 		emit(id, ...args) {
-			map.get(id)?.forEach(listener => {
-				listener(...args);
-			});
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+			return map.get(id)?.map(listener => listener(...args)).filter(guard.not.ulx) ?? [];
 		},
 		unlistenAll(id) {
 			map.delete(id);

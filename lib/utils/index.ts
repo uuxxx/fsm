@@ -11,4 +11,5 @@ export type {Entries} from './types/Entries';
 export {guard} from './lib/guard';
 export {noop} from './lib/noop';
 export {wait} from './lib/wait';
-export {makeEventEmitter} from './lib/eventEmitter';
+export {tap} from './lib/tap';
+export {makeEventEmitter, type EventEmitter} from './lib/eventEmitter';

@@ -1,9 +1,13 @@
+import type {Noop} from '../types/Noop';
 import {makeEventEmitter} from './eventEmitter';
+import {noop} from './noop';
+import {tap} from './tap';
 
 describe('eventEmitter', () => {
 	let emitter = makeEventEmitter<{
-		noArgs: never[];
-		withArgs: [number, string];
+		noArgs: Noop;
+		withArgs: (n: number, s: string) => void;
+		hasReturnValue: (n: number) => number;
 	}>();
 
 	beforeEach(() => {
@@ -67,6 +71,18 @@ describe('eventEmitter', () => {
 			emitter.emit('noArgs');
 			expect(listener.mock.calls).toHaveLength(0);
 			expect(listener2.mock.calls).toHaveLength(0);
+		});
+	});
+
+	describe('emit', () => {
+		test('return values, returned by listeners', () => {
+			emitter.listen('hasReturnValue', tap);
+			expect(emitter.emit('hasReturnValue', 10)).toEqual([10]);
+		});
+
+		test('filter undefined', () => {
+			emitter.listen('noArgs', noop);
+			expect(emitter.emit('noArgs')).toEqual([]);
 		});
 	});
 });
