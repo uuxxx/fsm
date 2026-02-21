@@ -1,5 +1,5 @@
 import {type Rec} from '../lib/utils';
-import {makeFsm} from '../lib';
+import {makeFsm} from '../lib/core/fsm';
 import type {Transition} from '../lib/types/Transition';
 import type {Config} from '../lib/types/Config';
 
