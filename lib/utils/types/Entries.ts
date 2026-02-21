@@ -1,4 +1,4 @@
-import type {KeyOf} from './KeyOf';
+import type {KeyOf} from './Keyof';
 import type {Rec} from './Rec';
 
 export type Entries<T extends Rec> = {

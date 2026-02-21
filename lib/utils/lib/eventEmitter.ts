@@ -1,5 +1,5 @@
 import type {AnyFn} from '../types/AnyFn';
-import type {KeyOf} from '../types/KeyOf';
+import type {KeyOf} from '../types/Keyof';
 import type {Noop} from '../types/Noop';
 import type {Rec} from '../types/Rec';
 import type {ValueOf} from '../types/ValueOf';

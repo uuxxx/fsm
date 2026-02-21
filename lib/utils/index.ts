@@ -4,7 +4,7 @@ export type {Rec} from './types/Rec';
 export type {Key} from './types/Key';
 export type {Vdx} from './types/Vdx';
 export type {Ulx} from './types/Ulx';
-export type {KeyOf} from './types/KeyOf';
+export type {KeyOf} from './types/Keyof';
 export type {ValueOf} from './types/ValueOf';
 export type {EmptyArray} from './types/EmptyArray';
 export type {Entries} from './types/Entries';
