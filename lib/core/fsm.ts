@@ -35,8 +35,8 @@ export const makeFsm = <TState extends Label, TTransitions extends Rec<Transitio
 		allStates: () => [...config.states],
 	};
 
-	const transitionMethods = makeTransitionMethods<TState, TTransitions>(config.transitions, eventEmitter, () => state);
-	const pluginsMethods = makePluginsMethods<TState, TTransitions, TPlugins>(config.plugins, eventEmitter);
+	const transitionMethods = makeTransitionMethods<TState, TTransitions>(config.transitions, eventEmitter, stateMethods.state);
+	const pluginsMethods = makePluginsMethods<TState, TTransitions, TPlugins>(config.plugins, eventEmitter, stateMethods);
 
 	eventEmitter.emit('init', state);
 

@@ -3,7 +3,11 @@ import type {Label} from '../types/Label';
 import type {ApiForPlugin, Plugin} from '../types/Plugin';
 import type {PluginsMethods} from '../types/PluginsMethods';
 import type {Transition} from '../types/Transition';
-import type {KeyOf, Rec, Ulx} from '../utils';
+import type {
+	Entries, KeyOf, Rec, Ulx,
+} from '../utils';
+import type {StateMethods} from '../types/StateMethods';
+import type {Lifecycle} from '../types/LifecycleMethods';
 
 type Builder<TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>>
 	= {
@@ -12,12 +16,22 @@ type Builder<TState extends Label, TTransitions extends Rec<Transition<TState>>,
 	};
 
 const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>>
-(eventEmitter: EventEmitter<TState, TTransitions>): Builder<TState, TTransitions, TPlugins> => {
+(eventEmitter: EventEmitter<TState, TTransitions>, stateMethods: StateMethods<TState>): Builder<TState, TTransitions, TPlugins> => {
 	const methods = {} as PluginsMethods<TState, TTransitions, TPlugins>;
 
 	const api: ApiForPlugin<TState, TTransitions> = {
 		init(listener) {
 			eventEmitter.listen('init', listener);
+		},
+		unsafe__goto(to) {
+			const lifecycle: Lifecycle<TState, Entries<TTransitions>> = {
+				to,
+				from: api.state(),
+				transition: 'unsafe__goto',
+			};
+
+			eventEmitter.emit('onBeforeTransition', lifecycle);
+			eventEmitter.emit('onAfterTransition', lifecycle);
 		},
 		onBeforeTransition(listener) {
 			return eventEmitter.listen('onBeforeTransition', listener);
@@ -25,6 +39,7 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 		onAfterTransition(listener) {
 			return eventEmitter.listen('onAfterTransition', listener);
 		},
+		...stateMethods,
 	};
 
 	const builder: Builder<TState, TTransitions, TPlugins> = {
@@ -47,8 +62,8 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 };
 
 export const makePluginsMethods = <TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>>
-(plugins: Ulx<TPlugins>, eventEmitter: EventEmitter<TState, TTransitions>): PluginsMethods<TState, TTransitions, TPlugins> => {
-	const builder = makeBuilder<TState, TTransitions, TPlugins>(eventEmitter);
+(plugins: Ulx<TPlugins>, eventEmitter: EventEmitter<TState, TTransitions>, stateMethods: StateMethods<TState>): PluginsMethods<TState, TTransitions, TPlugins> => {
+	const builder = makeBuilder<TState, TTransitions, TPlugins>(eventEmitter, stateMethods);
 	(plugins ?? []).forEach(builder.register);
 	return builder.make();
 };

@@ -3,11 +3,17 @@ import type {
 } from '../utils';
 import type {Label} from './Label';
 import type {LifecycleMethods} from './LifecycleMethods';
+import type {StateMethods} from './StateMethods';
 import type {Transition} from './Transition';
 
 export type ApiForPlugin<TState extends Label, TTransitions extends Rec<Transition<TState>>> = {
 	init: (listener: (state: TState) => void) => void;
-} & {
+	/**
+	 * @note
+	 * Use carefully, this method bypasses transition checks
+	 */
+	unsafe__goto: (state: TState) => void;
+} & StateMethods<TState> & {
 	[K in KeyOf<LifecycleMethods<TState, TTransitions>>]-?: (listener: LifecycleMethods<TState, TTransitions>[K]) => Noop
 };
 
