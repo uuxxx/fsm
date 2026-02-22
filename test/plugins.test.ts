@@ -1,5 +1,5 @@
-import {type Rec} from '../lib/utils';
-import {makeFsm} from '../lib';
+import {type Rec, type Ulx} from '../lib/utils';
+import {makeFsm} from '../lib/core/fsm';
 import type {Config} from '../lib/types/Config';
 import type {Transition} from '../lib/types/Transition';
 import type {Plugin} from '../lib/types/Plugin';
@@ -67,6 +67,39 @@ describe('plugins', () => {
 	});
 
 	describe('plugin api', () => {
+		test('allStates', () => {
+			let allStates: Ulx<State[]>;
+
+			makeFsm({
+				...CONFIG, plugins: [api => {
+					allStates = api.allStates();
+
+					return {
+						name: 'test-plugin',
+						api: {},
+					};
+				}],
+			});
+
+			expect(allStates).toEqual(['a', 'b']);
+		});
+
+		test('state', () => {
+			const fsm = makeFsm({
+				...CONFIG, plugins: [api => ({
+					name: 'test-plugin' as const,
+					api: {
+						state() {
+							return api.state();
+						},
+					},
+				})],
+			});
+
+			fsm['a -> b']();
+			expect(fsm['test-plugin'].state()).toEqual('b');
+		});
+
 		test('init method is called', () => {
 			makeFsm(CONFIG);
 			expect(MOCK_FN.init.mock.calls).toHaveLength(1);

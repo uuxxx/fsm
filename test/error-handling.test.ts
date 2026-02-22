@@ -1,7 +1,7 @@
 import {noop, type Rec} from '../lib/utils';
 import type {Transition} from '../lib/types/Transition';
 import type {Config} from '../lib/types/Config';
-import {makeFsm} from '../lib';
+import {makeFsm} from '../lib/core/fsm';
 
 type State = 'a' | 'b';
 
