@@ -51,11 +51,11 @@ const CONFIG: Config<
 	plugins: [testPlugin()],
 };
 
-describe('plugins', () => {
-	beforeEach(() => {
-		Object.values(MOCK_FN).forEach(mock => mock.mockClear());
-	});
+beforeEach(() => {
+	Object.values(MOCK_FN).forEach(mock => mock.mockClear());
+});
 
+describe('plugins', () => {
 	test('throws on >= 2 plugins registered with the same name', () => {
 		expect(() =>
 			makeFsm({...CONFIG, plugins: [testPlugin(), testPlugin()]})).toThrowErrorMatchingInlineSnapshot('"[FSM]: There are at least two plugins with the same name: test-plugin"');

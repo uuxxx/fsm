@@ -20,6 +20,15 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 	const builder: Builder<TState, TTransitions> = {
 		register(name, transition) {
 			const checkIsOkAndChangeState = (lifecycle: Lifecycle<TState, Entries<TTransitions>>) => {
+				if (lifecycle.to === lifecycle.from) {
+					eventEmitter.emit('warn', `
+						Transition: "${name as string}" is canceled because it's circular.
+						Current state is ${lifecycle.from}. Transition target state is ${lifecycle.to}
+					`);
+
+					return;
+				}
+
 				const isOk = eventEmitter.emit('onBeforeTransition', lifecycle)
 					.filter(guard.boolean)
 					.every(guard.true);
@@ -38,12 +47,12 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 						: transition.from !== '*' && transition.from !== state();
 
 				if (isErr) {
-					eventEmitter.emit('error', `Transition: ${name as string} is forbidden`);
+					eventEmitter.emit('error', `Transition: "${name as string}" is forbidden`);
 					return state();
 				}
 
 				if (pending) {
-					eventEmitter.emit('error', `Transition: ${name as string} can't be made. Has pending transtion: ${pending}`);
+					eventEmitter.emit('error', `Transition: "${name as string}" can't be made. Has pending transtion: "${pending}"`);
 					return state();
 				}
 
@@ -65,7 +74,7 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 						transition: name,
 						from: state(),
 						to: value,
-						// @ts-expect-error TODO: fix type issue
+						// @ts-expect-error it's fine
 						args,
 					};
 
@@ -83,7 +92,7 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 							transition: name,
 							from: state(),
 							to: resolvedValue,
-							// @ts-expect-error TODO: fix type issue
+							// @ts-expect-error its' fine
 							args,
 						};
 
