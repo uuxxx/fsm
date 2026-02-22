@@ -8,11 +8,6 @@ import type {Transition} from './Transition';
 
 export type ApiForPlugin<TState extends Label, TTransitions extends Rec<Transition<TState>>> = {
 	init: (listener: (state: TState) => void) => void;
-	/**
-	 * @note
-	 * Use carefully, this method bypasses transition checks
-	 */
-	unsafe__goto: (state: TState) => void;
 } & StateMethods<TState> & {
 	[K in KeyOf<LifecycleMethods<TState, TTransitions>>]-?: (listener: LifecycleMethods<TState, TTransitions>[K]) => Noop
 };

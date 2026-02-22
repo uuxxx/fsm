@@ -4,10 +4,9 @@ import type {ApiForPlugin, Plugin} from '../types/Plugin';
 import type {PluginsMethods} from '../types/PluginsMethods';
 import type {Transition} from '../types/Transition';
 import type {
-	Entries, KeyOf, Rec, Ulx,
+	KeyOf, Rec, Ulx,
 } from '../utils';
 import type {StateMethods} from '../types/StateMethods';
-import type {Lifecycle} from '../types/LifecycleMethods';
 
 type Builder<TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>>
 	= {
@@ -22,16 +21,6 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 	const api: ApiForPlugin<TState, TTransitions> = {
 		init(listener) {
 			eventEmitter.listen('init', listener);
-		},
-		unsafe__goto(to) {
-			const lifecycle: Lifecycle<TState, Entries<TTransitions>> = {
-				to,
-				from: api.state(),
-				transition: 'unsafe__goto',
-			};
-
-			eventEmitter.emit('onBeforeTransition', lifecycle);
-			eventEmitter.emit('onAfterTransition', lifecycle);
 		},
 		onBeforeTransition(listener) {
 			return eventEmitter.listen('onBeforeTransition', listener);

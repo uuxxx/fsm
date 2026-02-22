@@ -36,7 +36,6 @@ const testPlugin = ((mocks = MOCK_FN) => api => {
 		name: 'test-plugin' as const,
 		api: {
 			show: (): State[] => STATES,
-			unsafe__goto: api.unsafe__goto,
 		},
 	};
 }) satisfies (mocks?: typeof MOCK_FN) => Plugin<State, typeof TRANSITIONS>;
@@ -99,25 +98,6 @@ describe('plugins', () => {
 
 			fsm['a -> b']();
 			expect(fsm['test-plugin'].state()).toEqual('b');
-		});
-
-		test('unsafe__goto', () => {
-			const fsm = makeFsm(CONFIG);
-			fsm['test-plugin'].unsafe__goto('b');
-
-			expect(MOCK_FN.onBeforeTransition.mock.calls).toHaveLength(1);
-			expect(MOCK_FN.onBeforeTransition.mock.calls[0][0]).toEqual({
-				transition: 'unsafe__goto',
-				from: 'a',
-				to: 'b',
-			});
-			expect(MOCK_FN.onAfterTransition.mock.calls).toHaveLength(1);
-			expect(MOCK_FN.onAfterTransition.mock.calls[0][0]).toEqual({
-				transition: 'unsafe__goto',
-				from: 'a',
-				to: 'b',
-			});
-			expect(fsm.state()).toBe('b');
 		});
 
 		test('init method is called', () => {
