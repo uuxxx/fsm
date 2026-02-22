@@ -1,6 +1,6 @@
 {
   "name": "@uuxxx/fsm",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "scripts": {
     "build": "rolldown -c rolldown.config.ts",
     "changeset:version": "changeset version && git add --all && git commit -m 'chore: bump'",
