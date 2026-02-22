@@ -1,5 +1,11 @@
 # @uuxxx/fsm
 
+## 1.2.0
+
+### Minor Changes
+
+- bc8adc0: extend plugin api, add history plugin
+
 ## 1.1.0
 
 ### Minor Changes
