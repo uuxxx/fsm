@@ -39,8 +39,14 @@
     "LICENSE"
   ],
   "exports": {
-    "types": "./dist/index.d.ts",
-    "default": "./dist/index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./history-plugin": {
+      "types": "./dist/history-plugin.d.ts",
+      "default": "./dist/history-plugin.js"
+    }
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",

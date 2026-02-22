@@ -109,6 +109,14 @@ describe('lifecycle', () => {
 				to: 'd',
 			});
 		});
+
+		test('isn\'t called on circular transition', () => {
+			const fsm = makeFsm(CONFIG);
+			fsm.goto('a');
+
+			expect(fsm.state()).toBe('a');
+			expect(onBeforeTransition).not.toHaveBeenCalled();
+		});
 	});
 
 	describe('onAfterTransition', () => {
@@ -151,6 +159,14 @@ describe('lifecycle', () => {
 				from: 'a',
 				to: 'd',
 			});
+		});
+
+		test('isn\'t called on circular transition', () => {
+			const fsm = makeFsm(CONFIG);
+			fsm.goto('a');
+
+			expect(fsm.state()).toBe('a');
+			expect(onAfterTransition).not.toHaveBeenCalled();
 		});
 	});
 });

@@ -1,10 +1,15 @@
-import {defineConfig} from 'rolldown';
+import {defineConfig, type InputOption} from 'rolldown';
 import {dts} from 'rolldown-plugin-dts';
 import {minify} from 'rollup-plugin-swc3';
 
+const INPUT: InputOption = {
+	index: 'lib/index.ts',
+	'history-plugin': 'lib/history-plugin.ts',
+};
+
 export default defineConfig([
 	{
-		input: 'lib/index.ts',
+		input: INPUT,
 		output: {
 			dir: 'dist',
 			format: 'es',
@@ -23,7 +28,7 @@ export default defineConfig([
 		tsconfig: 'tsconfig.json',
 	},
 	{
-		input: 'lib/index.ts',
+		input: INPUT,
 		output: {
 			dir: 'dist',
 			format: 'es',

@@ -38,7 +38,7 @@ describe('error-handling', () => {
 			const fsm = makeFsm(CONFIG);
 			fsm['async goto']('b').catch(noop);
 
-			expect(fsm['a -> b']).toThrowErrorMatchingInlineSnapshot('"[FSM]: Transition: a -> b can\'t be made. Has pending transtion: async goto"');
+			expect(fsm['a -> b']).toThrowErrorMatchingInlineSnapshot('"[FSM]: Transition: "a -> b" can\'t be made. Has pending transtion: "async goto""');
 		});
 	});
 
@@ -46,7 +46,7 @@ describe('error-handling', () => {
 		test('current state doesn\'t match transition.from', () => {
 			const fsm = makeFsm(CONFIG);
 
-			expect(fsm['b -> a']).toThrowErrorMatchingInlineSnapshot('"[FSM]: Transition: b -> a is forbidden"');
+			expect(fsm['b -> a']).toThrowErrorMatchingInlineSnapshot('"[FSM]: Transition: "b -> a" is forbidden"');
 		});
 	});
 });

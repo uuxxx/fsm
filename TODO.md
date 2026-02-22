@@ -1,7 +1,7 @@
 # TODO
 
-[x] - setup ci
+[x] - Setup ci
 
-[ ] - Plugins
+[x] - Plugins
 
-[ ] - Error handling
+[ ] - Custom error handling
