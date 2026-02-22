@@ -1,5 +1,11 @@
 # @uuxxx/fsm
 
+## 1.2.2
+
+### Patch Changes
+
+- 7a80eb3: fix transitions bug
+
 ## 1.2.1
 
 ### Patch Changes
