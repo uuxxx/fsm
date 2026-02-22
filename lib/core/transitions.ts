@@ -6,6 +6,7 @@ import {
 } from '../utils';
 import type {EventEmitter} from './eventEmitter';
 import type {Lifecycle} from '../types/LifecycleMethods';
+import type {StateMethods} from '../types/StateMethods';
 
 type Builder<TState extends Label, TTransitions extends Rec<Transition<TState>>> = {
 	register: <K extends KeyOf<TTransitions>>(name: K, transition: TTransitions[K]) => Builder<TState, TTransitions>;
@@ -13,13 +14,22 @@ type Builder<TState extends Label, TTransitions extends Rec<Transition<TState>>>
 };
 
 const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<TState>>>
-(eventEmitter: EventEmitter<TState, TTransitions>, state: () => TState): Builder<TState, TTransitions> => {
+(eventEmitter: EventEmitter<TState, TTransitions>, {state, allStates}: StateMethods<TState>): Builder<TState, TTransitions> => {
 	const methods = {} as TransitionMethods<TTransitions>;
 	let pending: Ulx<Label>;
 
 	const builder: Builder<TState, TTransitions> = {
 		register(name, transition) {
 			const checkIsOkAndChangeState = (lifecycle: Lifecycle<TState, Entries<TTransitions>>) => {
+				if (!allStates().includes(lifecycle.to)) {
+					eventEmitter.emit(
+						'error',
+						`Transition: "${name as string}" can't be executed. It has invalid "to": "${lifecycle.to}"`,
+					);
+
+					return;
+				}
+
 				if (lifecycle.to === lifecycle.from) {
 					eventEmitter.emit('warn', `
 						Transition: "${name as string}" is canceled because it's circular.
@@ -112,8 +122,8 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 };
 
 export const makeTransitionMethods = <TState extends Label, TTransitions extends Rec<Transition<TState>>>
-(transitions: TTransitions, eventEmitter: EventEmitter<TState, TTransitions>, state: () => TState): TransitionMethods<TTransitions> => {
-	const builder = makeBuilder<TState, TTransitions>(eventEmitter, state);
+(transitions: TTransitions, eventEmitter: EventEmitter<TState, TTransitions>, stateMethods: StateMethods<TState>): TransitionMethods<TTransitions> => {
+	const builder = makeBuilder<TState, TTransitions>(eventEmitter, stateMethods);
 	Object.entries(transitions).forEach(([name, transition]) => builder.register(name, transition as any));
 	return builder.make();
 };

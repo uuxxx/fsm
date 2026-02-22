@@ -58,7 +58,7 @@ beforeEach(() => {
 describe('plugins', () => {
 	test('throws on >= 2 plugins registered with the same name', () => {
 		expect(() =>
-			makeFsm({...CONFIG, plugins: [testPlugin(), testPlugin()]})).toThrowErrorMatchingInlineSnapshot('"[FSM]: There are at least two plugins with the same name: test-plugin"');
+			makeFsm({...CONFIG, plugins: [testPlugin(), testPlugin()]})).toThrowErrorMatchingInlineSnapshot('"[FSM]: There are at least two plugins with the same name: "test-plugin""');
 	});
 
 	test('plugin user api is available and working', () => {

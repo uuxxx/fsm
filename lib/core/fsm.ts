@@ -16,6 +16,7 @@ import {
 export const makeFsm = <TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>>
 (config: Config<TState, TTransitions, TPlugins>): Methods<TState, TTransitions, TPlugins> => {
 	let state: TState = config.init;
+	const states = config.states.includes(config.init) ? [...config.states] : [...config.states, config.init];
 	const eventEmitter = makeEventEmitter<TState, TTransitions>();
 
 	Object.entries(config.methods ?? {}).forEach(([name, method]) => {
@@ -32,10 +33,10 @@ export const makeFsm = <TState extends Label, TTransitions extends Rec<Transitio
 
 	const stateMethods: StateMethods<TState> = {
 		state: () => state,
-		allStates: () => [...config.states],
+		allStates: () => states,
 	};
 
-	const transitionMethods = makeTransitionMethods<TState, TTransitions>(config.transitions, eventEmitter, stateMethods.state);
+	const transitionMethods = makeTransitionMethods<TState, TTransitions>(config.transitions, eventEmitter, stateMethods);
 	const pluginsMethods = makePluginsMethods<TState, TTransitions, TPlugins>(config.plugins, eventEmitter, stateMethods);
 
 	eventEmitter.emit('init', state);

@@ -36,7 +36,7 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 			const {name, api: pluginApi} = plugin(api);
 
 			if (name in methods) {
-				eventEmitter.emit('error', `There are at least two plugins with the same name: ${name}`);
+				eventEmitter.emit('error', `There are at least two plugins with the same name: "${name}"`);
 			}
 
 			methods[name as KeyOf<PluginsMethods<TState, TTransitions, TPlugins>>] = pluginApi;
