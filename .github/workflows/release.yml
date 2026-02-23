@@ -1,9 +1,11 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["CI"]
+    branches: [main]
+    types:
+      - completed
 
 concurrency:
   # prevent two release workflows from running at once
@@ -13,8 +15,7 @@ concurrency:
 permissions: {}
 jobs:
   release:
-    # prevents this action from running on forks
-    if: github.repository == 'uuxxx/fsm'
+    if: github.repository == 'uuxxx/fsm' && github.event.workflow_run.conclusion == 'success'
     permissions:
       contents: write # to create release (changesets/action)
       id-token: write # OpenID Connect token needed for provenance
