@@ -28,10 +28,8 @@
     "fsm"
   ],
   "engines": {
-    "node": " >= 20",
-    "pnpm": ">= 10",
-    "npm": "Please use pnpm instead of yarn to install dependencies",
-    "yarn": "Please use pnpm instead of yarn to install dependencies"
+    "node": ">= 20",
+    "pnpm": ">= 10"
   },
   "files": [
     "dist",
