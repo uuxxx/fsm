@@ -1,11 +1,11 @@
-import {tap, type Rec} from '../lib/utils';
+import {tap, type Rec} from '@uuxxx/utils';
 import {makeFsm} from '../lib/core/fsm';
 import type {Transition} from '../lib/types/Transition';
 import type {Config} from '../lib/types/Config';
 
-const onBeforeTransition = jest.fn();
-const onBeforeTransitionCancel = jest.fn((..._args: any[]) => false);
-const onAfterTransition = jest.fn();
+const onBeforeTransition = vitest.fn();
+const onBeforeTransitionCancel = vitest.fn((..._args: any[]) => false);
+const onAfterTransition = vitest.fn();
 
 type State = 'a' | 'b' | 'c' | 'd';
 

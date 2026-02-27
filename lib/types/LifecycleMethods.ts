@@ -1,7 +1,7 @@
 import type {
 	AnyFn,
 	Entries, Key, Rec, Vdx,
-} from '../utils';
+} from '@uuxxx/utils';
 import type {Transition} from './Transition';
 import type {Label} from './Label';
 

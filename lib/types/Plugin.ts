@@ -1,6 +1,6 @@
 import type {
 	AnyFn, KeyOf, Noop, Rec,
-} from '../utils';
+} from '@uuxxx/utils';
 import type {Label} from './Label';
 import type {LifecycleMethods} from './LifecycleMethods';
 import type {StateMethods} from './StateMethods';

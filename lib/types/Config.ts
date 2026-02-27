@@ -1,4 +1,4 @@
-import type {EmptyArray, Rec} from '../utils';
+import type {EmptyArray, Rec} from '@uuxxx/utils';
 import type {Label} from './Label';
 import type {LifecycleMethods} from './LifecycleMethods';
 import type {Plugin} from './Plugin';

@@ -1,10 +1,10 @@
 
-import {tap, type Rec} from '../lib/utils';
+import {tap, type Rec} from '@uuxxx/utils';
 import {makeFsm} from '../lib/core/fsm';
 import type {Config} from '../lib/types/Config';
 import type {Transition} from '../lib/types/Transition';
 import {historyPlugin} from '../lib/plugins/history';
-import {type Plugin} from 'lib/types/Plugin';
+import {type Plugin} from '../lib/types/Plugin';
 
 type State = 'leetcode.com' | 'google.com' | 'facebook.com' | 'youtube.com' | 'linkedin.com';
 

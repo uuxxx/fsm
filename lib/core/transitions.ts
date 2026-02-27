@@ -2,8 +2,8 @@ import type {TransitionMethods} from '../types/TransitionMethods';
 import type {Label} from '../types/Label';
 import type {Transition} from '../types/Transition';
 import {
-	guard, type Entries, type KeyOf, type Rec, type Ulx,
-} from '../utils';
+	type Entries, type KeyOf, type Rec, type Ulx, guard,
+} from '@uuxxx/utils';
 import type {EventEmitter} from './eventEmitter';
 import type {Lifecycle} from '../types/LifecycleMethods';
 import type {StateMethods} from '../types/StateMethods';

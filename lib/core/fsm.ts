@@ -11,7 +11,7 @@ import type {Transition} from '../types/Transition';
 import {
 	type KeyOf,
 	type Rec,
-} from '../utils';
+} from '@uuxxx/utils';
 
 export const makeFsm = <TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>>
 (config: Config<TState, TTransitions, TPlugins>): Methods<TState, TTransitions, TPlugins> => {

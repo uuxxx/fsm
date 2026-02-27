@@ -5,7 +5,7 @@ import type {PluginsMethods} from '../types/PluginsMethods';
 import type {Transition} from '../types/Transition';
 import type {
 	KeyOf, Rec, Ulx,
-} from '../utils';
+} from '@uuxxx/utils';
 import type {StateMethods} from '../types/StateMethods';
 
 type Builder<TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>>

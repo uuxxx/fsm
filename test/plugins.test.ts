@@ -1,4 +1,4 @@
-import {type Rec, type Ulx} from '../lib/utils';
+import {type Rec, type Ulx} from '@uuxxx/utils';
 import {makeFsm} from '../lib/core/fsm';
 import type {Config} from '../lib/types/Config';
 import type {Transition} from '../lib/types/Transition';
@@ -22,9 +22,9 @@ const INIT: State = 'a';
 const STATES: State[] = ['a', 'b'];
 
 const MOCK_FN = {
-	init: jest.fn(),
-	onBeforeTransition: jest.fn(),
-	onAfterTransition: jest.fn(),
+	init: vitest.fn(),
+	onBeforeTransition: vitest.fn(),
+	onAfterTransition: vitest.fn(),
 } as const;
 
 const testPlugin = ((mocks = MOCK_FN) => api => {
@@ -58,7 +58,7 @@ beforeEach(() => {
 describe('plugins', () => {
 	test('throws on >= 2 plugins registered with the same name', () => {
 		expect(() =>
-			makeFsm({...CONFIG, plugins: [testPlugin(), testPlugin()]})).toThrowErrorMatchingInlineSnapshot('"[FSM]: There are at least two plugins with the same name: "test-plugin""');
+			makeFsm({...CONFIG, plugins: [testPlugin(), testPlugin()]})).toThrowErrorMatchingInlineSnapshot('[Error: [FSM]: There are at least two plugins with the same name: "test-plugin"]');
 	});
 
 	test('plugin user api is available and working', () => {
@@ -119,7 +119,7 @@ describe('plugins', () => {
 		});
 
 		test('onBeforeTransition cancel transition', () => {
-			const onBeforeTransition = jest.fn(_lifecycle => false);
+			const onBeforeTransition = vitest.fn(_lifecycle => false);
 
 			const fsm = makeFsm({
 				...CONFIG,

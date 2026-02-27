@@ -1,4 +1,4 @@
-import type {Rec} from '../utils';
+import type {Rec} from '@uuxxx/utils';
 import type {Label} from './Label';
 import type {Plugin} from './Plugin';
 import type {Transition} from './Transition';
