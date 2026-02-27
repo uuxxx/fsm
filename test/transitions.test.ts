@@ -1,4 +1,4 @@
-import {noop, type Rec} from '../lib/utils';
+import {noop, type Rec} from '@uuxxx/utils';
 import {makeFsm} from '../lib/core/fsm';
 import type {Config} from '../lib/types/Config';
 import type {Transition} from '../lib/types/Transition';
@@ -103,28 +103,28 @@ describe('transitions', () => {
 		test('has pending transition', () => {
 			const fsm = makeFsm(CONFIG);
 			fsm['async goto']('b').catch(noop);
-			expect(fsm['a -> b']).toThrowErrorMatchingInlineSnapshot('"[FSM]: Transition: "a -> b" can\'t be made. Has pending transtion: "async goto""');
+			expect(fsm['a -> b']).toThrowErrorMatchingInlineSnapshot('[Error: [FSM]: Transition: "a -> b" can\'t be made. Has pending transtion: "async goto"]');
 		});
 
 		test('current state doesn\'t match transition.from', () => {
 			const fsm = makeFsm(CONFIG);
-			expect(fsm['b -> a']).toThrowErrorMatchingInlineSnapshot('"[FSM]: Transition: "b -> a" is forbidden"');
+			expect(fsm['b -> a']).toThrowErrorMatchingInlineSnapshot('[Error: [FSM]: Transition: "b -> a" is forbidden]');
 		});
 
 		test('invalid transition.to sync', () => {
 			const fsm = makeFsm(CONFIG);
 			expect(() =>
 			// @ts-expect-error for testing
-				fsm.goto('some invalid state')).toThrowErrorMatchingInlineSnapshot('"[FSM]: Transition: "goto" can\'t be executed. It has invalid "to": "some invalid state""');
+				fsm.goto('some invalid state')).toThrowErrorMatchingInlineSnapshot('[Error: [FSM]: Transition: "goto" can\'t be executed. It has invalid "to": "some invalid state"]');
 			expect(fsm.state()).toBe('a');
 		});
 
-		test('invalid transition.to async', () => {
+		test('invalid transition.to async', async () => {
 			const fsm = makeFsm(CONFIG);
-			// eslint-disable-next-line @typescript-eslint/no-floating-promises
-			expect(() =>
+			await expect(() =>
 			// @ts-expect-error for testing
-				fsm['async goto']('some invalid state')).rejects.toThrowErrorMatchingInlineSnapshot('"[FSM]: Transition: "async goto" can\'t be executed. It has invalid "to": "some invalid state""');
+				fsm['async goto']('some invalid state'))
+				.rejects.toThrowErrorMatchingInlineSnapshot('[Error: [FSM]: Transition: "async goto" can\'t be executed. It has invalid "to": "some invalid state"]');
 			expect(fsm.state()).toBe('a');
 		});
 	});

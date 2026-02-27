@@ -1,4 +1,4 @@
-import type {KeyOf, Rec} from '../utils';
+import type {KeyOf, Rec} from '@uuxxx/utils';
 import type {Transition} from './Transition';
 import type {Label} from './Label';
 
