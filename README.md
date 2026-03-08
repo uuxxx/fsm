@@ -208,28 +208,20 @@ Plugins have access to:
 ### Creating a Plugin
 
 ```typescript
-const myPlugin = (options) => (api) => {
-  // Plugin initialization
-  api.init((initialState) => {
-    console.log('FSM initialized with state:', initialState);
-  });
+import type { FsmLabel, FsmPlugin, FsmTransition } from "@uuxxx/fsm";
 
-  // Listen to transitions
-  api.onBeforeTransition((event) => {
-    console.log('Transition starting:', event);
-  });
+export const somePlugin = <TState extends FsmLabel, TTransitions extends Record<string, FsmTransition<TState>>>
+() => (api => {
+	// ... plugin code
 
-  // Return plugin definition
-  return {
-    name: 'my-plugin',
-    api: {
-      // Custom methods exposed on fsm['my-plugin']
-      doSomething: () => {
-        return api.state();
-      },
-    },
-  };
-};
+	return {
+    // replace with your plugin name
+		name: 'plugin-name' as const,
+		api: {
+			// ... plugin methods
+		},
+	};
+}) satisfies FsmPlugin<TState, TTransitions>;
 ```
 
 ### Using Plugins
@@ -237,13 +229,13 @@ const myPlugin = (options) => (api) => {
 ```typescript
 const config = {
   // ... other config
-  plugins: [myPlugin({ someOption: true })],
+  plugins: [somePlugin({ someOption: true })],
 };
 
 const fsm = makeFsm(config);
 
 // Access plugin API
-const currentState = fsm['my-plugin'].doSomething();
+const currentState = fsm['plugin-name'].doSomething();
 ```
 
 ## Built-in Plugins
@@ -253,11 +245,12 @@ const currentState = fsm['my-plugin'].doSomething();
 Tracks state history and provides navigation methods.
 
 ```typescript
-import { makeFsm, historyPlugin } from '@uuxxx/fsm';
+import { makeFsm } from "@uuxxx/fsm";
+import { fsmHistoryPlugin } from "@uuxxx/fsm/history-plugin";
 
 const config = {
   // ... config
-  plugins: [historyPlugin()],
+  plugins: [fsmHistoryPlugin()],
 };
 
 const fsm = makeFsm(config);
@@ -269,32 +262,15 @@ fsm.goto('state2');
 // History API
 console.log(fsm.history.get()); // ['initial', 'state1', 'state2']
 
-fsm.history.back(1); // Go back 1 step
-fsm.history.forward(1); // Go forward 1 step
+fsm.history.back(1); // Get 1 step back
+fsm.history.forward(1); // Get 1 step forward
 ```
 
 #### History API Methods
 
 - `fsm.history.get()`: Get the full history array
-- `fsm.history.back(steps?)`: Go back N steps (default: 1)
-- `fsm.history.forward(steps?)`: Go forward N steps (default: 1)
-
-## Error Handling
-
-The FSM throws errors in the following cases:
-
-- Invalid transition (current state doesn't match `from`)
-- Pending async transition when starting a new sync transition
-- Invalid target state
-- Duplicate plugin names
-
-```typescript
-try {
-  fsm.invalidTransition();
-} catch (error) {
-  console.error(error.message); // [FSM]: Transition: "invalidTransition" is forbidden
-}
-```
+- `fsm.history.back(steps?)`: Get N step back (default: 1)
+- `fsm.history.forward(steps?)`: Get N step forward (default: 1)
 
 ## TypeScript Support
 
