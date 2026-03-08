@@ -4,7 +4,7 @@ import type {Plugin} from '../types/Plugin';
 import type {Transition} from '../types/Transition';
 
 export const historyPlugin = <TState extends Label, TTransitions extends Rec<Transition<TState>>>() => (api => {
-	const history: Label[] = [];
+	const history: TState[] = [];
 	let pointer = 0;
 
 	api.init(state => history.push(state));
@@ -17,14 +17,14 @@ export const historyPlugin = <TState extends Label, TTransitions extends Rec<Tra
 	return {
 		name: 'history' as const,
 		api: {
-			get(): Label[] {
+			get(): TState[] {
 				return history;
 			},
-			back(steps: number): Label {
+			back(steps: number): TState {
 				pointer = Math.max(0, pointer - steps);
 				return history[pointer];
 			},
-			forward(steps: number): Label {
+			forward(steps: number): TState {
 				pointer = Math.min(history.length - 1, pointer + steps);
 				return history[pointer];
 			},
