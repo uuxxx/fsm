@@ -1,5 +1,11 @@
 # @uuxxx/fsm
 
+## 1.2.3
+
+### Patch Changes
+
+- 718bfe5: fix(plugins/history): make typings more precise
+
 ## 1.2.2
 
 ### Patch Changes
