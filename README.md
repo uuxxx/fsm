@@ -4,15 +4,6 @@
 
 A lightweight, type-safe finite state machine library for JavaScript/TypeScript with plugin support and lifecycle hooks.
 
-## Features
-
-- 🚀 **Type-safe**: Full TypeScript support with inferred types
-- 🔌 **Plugin system**: Extensible with custom plugins
-- 🎣 **Lifecycle hooks**: `onBeforeTransition` and `onAfterTransition`
-- ⚡ **Async support**: Handle asynchronous transitions
-- 🏗️ **Flexible transitions**: Support for single states, multiple states, or wildcard (`*`)
-- 🧪 **Well-tested**: Comprehensive test suite
-
 ## Installation
 
 ```bash
