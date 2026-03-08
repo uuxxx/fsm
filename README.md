@@ -260,7 +260,7 @@ fsm.goto('state1');
 fsm.goto('state2');
 
 // History API
-console.log(fsm.history.get()); // ['initial', 'state1', 'state2']
+console.log(fsm.history.get()); // Get all history
 
 fsm.history.back(1); // Get 1 step back
 fsm.history.forward(1); // Get 1 step forward
