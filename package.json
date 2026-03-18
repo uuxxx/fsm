@@ -1,6 +1,6 @@
 {
 	"name": "@uuxxx/fsm",
-	"version": "1.2.3",
+	"version": "1.2.4",
 	"description": "Javascript library for creating finite state machine",
 	"keywords": [
 		"finite state machine",
