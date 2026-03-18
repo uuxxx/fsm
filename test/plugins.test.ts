@@ -154,5 +154,55 @@ describe('plugins', () => {
 			});
 			expect(fsm.state()).toBe('b');
 		});
+
+		test('onError listener receives error messages', () => {
+			const onErrorMock = vitest.fn();
+
+			const fsm = makeFsm({
+				...CONFIG,
+				onError() {},
+				plugins: [
+					(api) => {
+						api.onError(onErrorMock);
+
+						return {
+							name: 'error-plugin' as const,
+							api: {},
+						};
+					},
+				],
+			});
+
+			fsm['b -> a']();
+			expect(onErrorMock).toHaveBeenCalledWith('Transition: "b -> a" is forbidden');
+		});
+
+		test('onError unsubscribe works', () => {
+			const onErrorMock = vitest.fn();
+
+			let unsubscribe: () => void;
+
+			const fsm = makeFsm({
+				...CONFIG,
+				onError() {},
+				plugins: [
+					(api) => {
+						unsubscribe = api.onError(onErrorMock);
+
+						return {
+							name: 'error-plugin' as const,
+							api: {},
+						};
+					},
+				],
+			});
+
+			fsm['b -> a']();
+			expect(onErrorMock).toHaveBeenCalledTimes(1);
+
+			unsubscribe!();
+			fsm['b -> a']();
+			expect(onErrorMock).toHaveBeenCalledTimes(1);
+		});
 	});
 });

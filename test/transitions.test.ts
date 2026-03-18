@@ -130,4 +130,20 @@ describe('transitions', () => {
 			expect(fsm.state()).toBe('a');
 		});
 	});
+
+	describe('onError config', () => {
+		test('errors do not throw when onError is provided', () => {
+			const onError = vitest.fn();
+			const fsm = makeFsm({ ...CONFIG, onError });
+			expect(() => fsm['b -> a']()).not.toThrow();
+			expect(onError).toHaveBeenCalledWith('Transition: "b -> a" is forbidden');
+		});
+
+		test('FSM state remains unchanged after handled error', () => {
+			const onError = vitest.fn();
+			const fsm = makeFsm({ ...CONFIG, onError });
+			fsm['b -> a']();
+			expect(fsm.state()).toBe('a');
+		});
+	});
 });

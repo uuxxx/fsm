@@ -10,4 +10,5 @@ export type Config<TState extends Label, TTransitions extends Rec<Transition<TSt
 	transitions: TTransitions;
 	methods?: LifecycleMethods<TState, TTransitions>;
 	plugins?: TPlugins;
+	onError?: (msg: string) => void;
 };
