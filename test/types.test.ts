@@ -1,0 +1,288 @@
+import type { Rec } from '@uuxxx/utils';
+import { makeFsm } from '../lib/core/fsm';
+import type { Config } from '../lib/types/Config';
+import type { Transition } from '../lib/types/Transition';
+import { historyPlugin } from '../lib/plugins/history';
+
+type State = 'idle' | 'loading' | 'success' | 'error';
+
+const transitions = {
+	load: {
+		from: 'idle',
+		to: 'loading',
+	},
+	resolve: {
+		from: 'loading',
+		to: 'success',
+	},
+	reject: {
+		from: 'loading',
+		to: 'error',
+	},
+	reset: {
+		from: '*',
+		to: 'idle',
+	},
+	goto: {
+		from: '*',
+		to(state: State) {
+			return state;
+		},
+	},
+	asyncGoto: {
+		from: '*',
+		to(state: State) {
+			return Promise.resolve(state);
+		},
+	},
+	multiSource: {
+		from: ['success', 'error'] as ['success', 'error'],
+		to: 'idle',
+	},
+} satisfies Rec<Transition<State>>;
+
+type Transitions = typeof transitions;
+
+const config: Config<State, Transitions> = {
+	init: 'idle',
+	states: ['idle', 'loading', 'success', 'error'],
+	transitions,
+};
+
+describe('types', () => {
+	describe('makeFsm return type', () => {
+		test('state() returns the state union', () => {
+			const fsm = makeFsm(config);
+			expectTypeOf(fsm.state).toEqualTypeOf<() => State>();
+		});
+
+		test('allStates() returns array of state union', () => {
+			const fsm = makeFsm(config);
+			expectTypeOf(fsm.allStates).toEqualTypeOf<() => State[]>();
+		});
+	});
+
+	describe('static transition methods', () => {
+		test('static to returns a no-arg function returning the target literal', () => {
+			const fsm = makeFsm(config);
+			expectTypeOf(fsm.load).toEqualTypeOf<() => 'loading'>();
+			expectTypeOf(fsm.resolve).toEqualTypeOf<() => 'success'>();
+			expectTypeOf(fsm.reject).toEqualTypeOf<() => 'error'>();
+			expectTypeOf(fsm.reset).toEqualTypeOf<() => 'idle'>();
+			expectTypeOf(fsm.multiSource).toEqualTypeOf<() => 'idle'>();
+		});
+
+		test('static transition return value is the literal target state', () => {
+			const fsm = makeFsm(config);
+			const result = fsm.load();
+			expectTypeOf(result).toEqualTypeOf<'loading'>();
+		});
+	});
+
+	describe('dynamic transition methods', () => {
+		test('sync dynamic to preserves the function signature', () => {
+			const fsm = makeFsm(config);
+			expectTypeOf(fsm.goto).toEqualTypeOf<(state: State) => State>();
+		});
+
+		test('async dynamic to preserves the function signature', () => {
+			const fsm = makeFsm(config);
+			expectTypeOf(fsm.asyncGoto).toEqualTypeOf<(state: State) => Promise<State>>();
+		});
+	});
+
+	describe('transition methods exist as keys', () => {
+		test('all transition names are accessible on the fsm instance', () => {
+			const fsm = makeFsm(config);
+			expectTypeOf(fsm).toHaveProperty('load');
+			expectTypeOf(fsm).toHaveProperty('resolve');
+			expectTypeOf(fsm).toHaveProperty('reject');
+			expectTypeOf(fsm).toHaveProperty('reset');
+			expectTypeOf(fsm).toHaveProperty('goto');
+			expectTypeOf(fsm).toHaveProperty('asyncGoto');
+			expectTypeOf(fsm).toHaveProperty('multiSource');
+		});
+	});
+
+	describe('config type constraints', () => {
+		test('init must be a valid state', () => {
+			makeFsm<State, Transitions, []>({
+				// @ts-expect-error init must be a valid State
+				init: 'invalid',
+				states: ['idle', 'loading', 'success', 'error'],
+				transitions,
+			});
+		});
+
+		test('transition from must reference valid states', () => {
+			const badTransitions = {
+				bad: {
+					// @ts-expect-error 'nonexistent' is not a valid State
+					from: 'nonexistent',
+					to: 'idle',
+				},
+			} satisfies Rec<Transition<State>>;
+
+			void badTransitions;
+		});
+
+		test('transition to must reference valid states', () => {
+			const badTransitions = {
+				bad: {
+					from: 'idle',
+					// @ts-expect-error 'nonexistent' is not a valid State
+					to: 'nonexistent',
+				},
+			} satisfies Rec<Transition<State>>;
+
+			void badTransitions;
+		});
+
+		test('transition from array must contain valid states', () => {
+			const badTransitions = {
+				bad: {
+					// @ts-expect-error 'nonexistent' is not a valid State
+					from: ['idle', 'nonexistent'],
+					to: 'loading',
+				},
+			} satisfies Rec<Transition<State>>;
+
+			void badTransitions;
+		});
+	});
+
+	describe('lifecycle methods typing', () => {
+		test('onBeforeTransition receives typed lifecycle', () => {
+			makeFsm({
+				...config,
+				methods: {
+					onBeforeTransition(lifecycle) {
+						expectTypeOf(lifecycle.from).toEqualTypeOf<State>();
+						expectTypeOf(lifecycle.to).toEqualTypeOf<State>();
+						expectTypeOf(lifecycle.transition).toEqualTypeOf<keyof Transitions>();
+					},
+				},
+			});
+		});
+
+		test('onAfterTransition receives typed lifecycle', () => {
+			makeFsm({
+				...config,
+				methods: {
+					onAfterTransition(lifecycle) {
+						expectTypeOf(lifecycle.from).toEqualTypeOf<State>();
+						expectTypeOf(lifecycle.to).toEqualTypeOf<State>();
+						expectTypeOf(lifecycle.transition).toEqualTypeOf<keyof Transitions>();
+					},
+				},
+			});
+		});
+
+		test('onBeforeTransition can return boolean or void', () => {
+			makeFsm({
+				...config,
+				methods: {
+					onBeforeTransition() {
+						return true;
+					},
+				},
+			});
+
+			makeFsm({
+				...config,
+				methods: {
+					onBeforeTransition() {
+						// returning void is also valid
+					},
+				},
+			});
+		});
+	});
+
+	describe('history plugin typing', () => {
+		test('history plugin methods are accessible under fsm.history', () => {
+			const plugin = historyPlugin<State, Transitions>();
+
+			const fsm = makeFsm({
+				...config,
+				plugins: [plugin],
+			});
+
+			expectTypeOf(fsm).toHaveProperty('history');
+			expectTypeOf(fsm.history.get).toBeFunction();
+			expectTypeOf(fsm.history.back).toBeFunction();
+			expectTypeOf(fsm.history.forward).toBeFunction();
+		});
+
+		test('history.get() returns typed state array', () => {
+			const plugin = historyPlugin<State, Transitions>();
+
+			const fsm = makeFsm({
+				...config,
+				plugins: [plugin],
+			});
+
+			expectTypeOf(fsm.history.get()).toEqualTypeOf<State[]>();
+		});
+
+		test('history.back() returns typed state', () => {
+			const plugin = historyPlugin<State, Transitions>();
+
+			const fsm = makeFsm({
+				...config,
+				plugins: [plugin],
+			});
+
+			expectTypeOf(fsm.history.back(1)).toEqualTypeOf<State>();
+		});
+
+		test('history.forward() returns typed state', () => {
+			const plugin = historyPlugin<State, Transitions>();
+
+			const fsm = makeFsm({
+				...config,
+				plugins: [plugin],
+			});
+
+			expectTypeOf(fsm.history.forward(1)).toEqualTypeOf<State>();
+		});
+	});
+
+	describe('wildcard and multi-source transitions', () => {
+		test('wildcard from accepts any string literal', () => {
+			const t: Transition<State> = {
+				from: '*',
+				to: 'idle',
+			};
+			expectTypeOf(t.from).toEqualTypeOf<'*' | State | State[]>();
+		});
+
+		test('multi-source from accepts array of states', () => {
+			const t: Transition<State> = {
+				from: ['idle', 'loading'],
+				to: 'error',
+			};
+			void t;
+		});
+	});
+
+	describe('dynamic to function constraints', () => {
+		test('dynamic to function must return a valid state or Promise of state', () => {
+			const t: Transition<State> = {
+				from: '*',
+				to(x: number) {
+					return x > 0 ? 'success' : 'error';
+				},
+			};
+			void t;
+		});
+
+		test('dynamic to async function returns Promise<State>', () => {
+			const t: Transition<State> = {
+				from: '*',
+				to: async (): Promise<State> => 'idle',
+			};
+			void t;
+		});
+	});
+});
