@@ -1,13 +1,13 @@
 {
-  "compilerOptions": {
-    "types": ["vitest/globals"],
-    "target": "es2015",
-    "allowJs": true,
-    "strict": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "baseUrl": ".",
-    "importHelpers": true,
-    "verbatimModuleSyntax": true
-  }
+	"compilerOptions": {
+		"types": ["vitest/globals"],
+		"target": "es2015",
+		"allowJs": true,
+		"strict": true,
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"importHelpers": true,
+		"verbatimModuleSyntax": true
+	},
+	"exclude": ["dist", "node_modules"]
 }

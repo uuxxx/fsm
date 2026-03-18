@@ -1,20 +1,20 @@
-import type {TransitionMethods} from '../types/TransitionMethods';
-import type {Label} from '../types/Label';
-import type {Transition} from '../types/Transition';
-import {
-	type Entries, type KeyOf, type Rec, type Ulx, guard,
-} from '@uuxxx/utils';
-import type {EventEmitter} from './eventEmitter';
-import type {Lifecycle} from '../types/LifecycleMethods';
-import type {StateMethods} from '../types/StateMethods';
+import type { TransitionMethods } from '../types/TransitionMethods';
+import type { Label } from '../types/Label';
+import type { Transition } from '../types/Transition';
+import { type Entries, type KeyOf, type Rec, type Ulx, guard } from '@uuxxx/utils';
+import type { EventEmitter } from './eventEmitter';
+import type { Lifecycle } from '../types/LifecycleMethods';
+import type { StateMethods } from '../types/StateMethods';
 
 type Builder<TState extends Label, TTransitions extends Rec<Transition<TState>>> = {
 	register: <K extends KeyOf<TTransitions>>(name: K, transition: TTransitions[K]) => Builder<TState, TTransitions>;
 	make: () => TransitionMethods<TTransitions>;
 };
 
-const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<TState>>>
-(eventEmitter: EventEmitter<TState, TTransitions>, {state, allStates}: StateMethods<TState>): Builder<TState, TTransitions> => {
+const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<TState>>>(
+	eventEmitter: EventEmitter<TState, TTransitions>,
+	{ state, allStates }: StateMethods<TState>,
+): Builder<TState, TTransitions> => {
 	const methods = {} as TransitionMethods<TTransitions>;
 	let pending: Ulx<Label>;
 
@@ -22,26 +22,24 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 		register(name, transition) {
 			const checkIsOkAndChangeState = (lifecycle: Lifecycle<TState, Entries<TTransitions>>) => {
 				if (!allStates().includes(lifecycle.to)) {
-					eventEmitter.emit(
-						'error',
-						`Transition: "${name as string}" can't be executed. It has invalid "to": "${lifecycle.to}"`,
-					);
+					eventEmitter.emit('error', `Transition: "${name as string}" can't be executed. It has invalid "to": "${lifecycle.to}"`);
 
 					return;
 				}
 
 				if (lifecycle.to === lifecycle.from) {
-					eventEmitter.emit('warn', `
+					eventEmitter.emit(
+						'warn',
+						`
 						Transition: "${name as string}" is canceled because it's circular.
 						Current state is ${lifecycle.from}. Transition target state is ${lifecycle.to}
-					`);
+					`,
+					);
 
 					return;
 				}
 
-				const isOk = eventEmitter.emit('onBeforeTransition', lifecycle)
-					.filter(guard.boolean)
-					.every(guard.true);
+				const isOk = eventEmitter.emit('onBeforeTransition', lifecycle).filter(guard.boolean).every(guard.true);
 
 				if (!isOk) {
 					return;
@@ -51,10 +49,7 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 			};
 
 			methods[name] = (...args: any[]): any => {
-				const isErr
-					= guard.array(transition.from)
-						? !transition.from.includes(state())
-						: transition.from !== '*' && transition.from !== state();
+				const isErr = guard.array(transition.from) ? !transition.from.includes(state()) : transition.from !== '*' && transition.from !== state();
 
 				if (isErr) {
 					eventEmitter.emit('error', `Transition: "${name as string}" is forbidden`);
@@ -94,21 +89,20 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 
 				pending = name as string;
 
-				return value
-					.then(resolvedValue => {
-						pending = undefined;
+				return value.then((resolvedValue) => {
+					pending = undefined;
 
-						const lifecycle: Lifecycle<TState, Entries<TTransitions>> = {
-							transition: name,
-							from: state(),
-							to: resolvedValue,
-							// @ts-expect-error its' fine
-							args,
-						};
+					const lifecycle: Lifecycle<TState, Entries<TTransitions>> = {
+						transition: name,
+						from: state(),
+						to: resolvedValue,
+						// @ts-expect-error its' fine
+						args,
+					};
 
-						checkIsOkAndChangeState(lifecycle);
-						return state();
-					});
+					checkIsOkAndChangeState(lifecycle);
+					return state();
+				});
 			};
 
 			return builder;
@@ -121,8 +115,11 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 	return builder;
 };
 
-export const makeTransitionMethods = <TState extends Label, TTransitions extends Rec<Transition<TState>>>
-(transitions: TTransitions, eventEmitter: EventEmitter<TState, TTransitions>, stateMethods: StateMethods<TState>): TransitionMethods<TTransitions> => {
+export const makeTransitionMethods = <TState extends Label, TTransitions extends Rec<Transition<TState>>>(
+	transitions: TTransitions,
+	eventEmitter: EventEmitter<TState, TTransitions>,
+	stateMethods: StateMethods<TState>,
+): TransitionMethods<TTransitions> => {
 	const builder = makeBuilder<TState, TTransitions>(eventEmitter, stateMethods);
 	Object.entries(transitions).forEach(([name, transition]) => builder.register(name, transition as any));
 	return builder.make();

@@ -1,69 +1,72 @@
 {
-  "name": "@uuxxx/fsm",
-  "version": "1.2.3",
-  "scripts": {
-    "build": "rolldown -c rolldown.config.ts",
-    "changeset:version": "changeset version && git add --all && git commit -m 'chore: bump'",
-    "changeset:publish": "changeset publish",
-    "test": "vitest run",
-    "lint": "eslint",
-    "lint:fix": "eslint --fix",
-    "check:types": "tsc --noEmit"
-  },
-  "author": "Artem Tryapichnikov <golysheeet@gmail.com>",
-  "license": "MIT",
-  "description": "Javascript library for creating finite state machine",
-  "homepage": "https://github.com/uuxxx/fsm/blob/main/README.md",
-  "type": "module",
-  "packageManager": "pnpm@10.4.0",
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/uuxxx/fsm.git"
-  },
-  "keywords": [
-    "finite state machine",
-    "fsm"
-  ],
-  "engines": {
-    "node": ">= 20",
-    "pnpm": ">= 10"
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./history-plugin": {
-      "types": "./dist/history-plugin.d.ts",
-      "default": "./dist/history-plugin.js"
-    }
-  },
-  "devDependencies": {
-    "@babel/core": "^7.28.4",
-    "@babel/preset-env": "^7.28.3",
-    "@babel/preset-typescript": "^7.27.1",
-    "@changesets/cli": "^2.29.7",
-    "@swc/core": "^1.13.5",
-    "eslint": "^9.37.0",
-    "eslint-config-xo-typescript": "^9.0.0",
-    "lefthook": "^2.0.2",
-    "rolldown": "^1.0.0-beta.41",
-    "rolldown-plugin-dts": "^0.22.1",
-    "rollup-plugin-swc3": "^0.12.1",
-    "ts-node": "^10.9.2",
-    "tslib": "^2.8.1",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
-  },
-  "dependencies": {
-    "@uuxxx/utils": "^0.0.3"
-  }
+	"name": "@uuxxx/fsm",
+	"version": "1.2.3",
+	"description": "Javascript library for creating finite state machine",
+	"keywords": [
+		"finite state machine",
+		"fsm"
+	],
+	"homepage": "https://github.com/uuxxx/fsm/blob/main/README.md",
+	"license": "MIT",
+	"author": "Artem Tryapichnikov <golysheeet@gmail.com>",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/uuxxx/fsm.git"
+	},
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE"
+	],
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./history-plugin": {
+			"types": "./dist/history-plugin.d.ts",
+			"default": "./dist/history-plugin.js"
+		}
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"build": "rolldown -c rolldown.config.ts",
+		"changeset:version": "changeset version && git add --all && git commit -m 'chore: bump'",
+		"changeset:publish": "changeset publish",
+		"test": "vitest run",
+		"lint": "oxlint",
+		"lint:fix": "oxlint --fix",
+		"fmt": "oxfmt --write .",
+		"fmt:check": "oxfmt --check .",
+		"check:types": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@uuxxx/utils": "^0.0.3"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.28.4",
+		"@babel/preset-env": "^7.28.3",
+		"@babel/preset-typescript": "^7.27.1",
+		"@changesets/cli": "^2.29.7",
+		"@swc/core": "^1.13.5",
+		"lefthook": "^2.0.2",
+		"oxfmt": "^0.41.0",
+		"oxlint": "^1.0.0",
+		"oxlint-tsgolint": "^0.17.0",
+		"rolldown": "^1.0.0-beta.41",
+		"rolldown-plugin-dts": "^0.22.1",
+		"rollup-plugin-swc3": "^0.12.1",
+		"ts-node": "^10.9.2",
+		"tslib": "^2.8.1",
+		"typescript": "^5.9.3",
+		"vitest": "^4.0.18"
+	},
+	"engines": {
+		"node": ">= 20",
+		"pnpm": ">= 10"
+	},
+	"packageManager": "pnpm@10.4.0"
 }

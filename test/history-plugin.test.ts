@@ -1,10 +1,9 @@
-
-import {tap, type Rec} from '@uuxxx/utils';
-import {makeFsm} from '../lib/core/fsm';
-import type {Config} from '../lib/types/Config';
-import type {Transition} from '../lib/types/Transition';
-import {historyPlugin} from '../lib/plugins/history';
-import {type Plugin} from '../lib/types/Plugin';
+import { tap, type Rec } from '@uuxxx/utils';
+import { makeFsm } from '../lib/core/fsm';
+import type { Config } from '../lib/types/Config';
+import type { Transition } from '../lib/types/Transition';
+import { historyPlugin } from '../lib/plugins/history';
+import { type Plugin } from '../lib/types/Plugin';
 
 type State = 'leetcode.com' | 'google.com' | 'facebook.com' | 'youtube.com' | 'linkedin.com';
 
@@ -24,11 +23,7 @@ const CONFIG = {
 	states: STATES,
 	transitions: TRANSITIONS,
 	plugins: [historyPlugin()],
-} satisfies Config<
-	State,
-	typeof TRANSITIONS,
-	Array<Plugin<State, typeof TRANSITIONS>>
->;
+} satisfies Config<State, typeof TRANSITIONS, Array<Plugin<State, typeof TRANSITIONS>>>;
 
 describe('history-plugin', () => {
 	test('scenario #1', () => {
