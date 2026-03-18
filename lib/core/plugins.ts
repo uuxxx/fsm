@@ -1,21 +1,20 @@
-import type {EventEmitter} from './eventEmitter';
-import type {Label} from '../types/Label';
-import type {ApiForPlugin, Plugin} from '../types/Plugin';
-import type {PluginsMethods} from '../types/PluginsMethods';
-import type {Transition} from '../types/Transition';
-import type {
-	KeyOf, Rec, Ulx,
-} from '@uuxxx/utils';
-import type {StateMethods} from '../types/StateMethods';
+import type { EventEmitter } from './eventEmitter';
+import type { Label } from '../types/Label';
+import type { ApiForPlugin, Plugin } from '../types/Plugin';
+import type { PluginsMethods } from '../types/PluginsMethods';
+import type { Transition } from '../types/Transition';
+import type { KeyOf, Rec, Ulx } from '@uuxxx/utils';
+import type { StateMethods } from '../types/StateMethods';
 
-type Builder<TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>>
-	= {
-		register: (plugin: Plugin<TState, TTransitions>) => Builder<TState, TTransitions, TPlugins>;
-		make: () => PluginsMethods<TState, TTransitions, TPlugins>;
-	};
+type Builder<TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>> = {
+	register: (plugin: Plugin<TState, TTransitions>) => Builder<TState, TTransitions, TPlugins>;
+	make: () => PluginsMethods<TState, TTransitions, TPlugins>;
+};
 
-const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>>
-(eventEmitter: EventEmitter<TState, TTransitions>, stateMethods: StateMethods<TState>): Builder<TState, TTransitions, TPlugins> => {
+const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>>(
+	eventEmitter: EventEmitter<TState, TTransitions>,
+	stateMethods: StateMethods<TState>,
+): Builder<TState, TTransitions, TPlugins> => {
 	const methods = {} as PluginsMethods<TState, TTransitions, TPlugins>;
 
 	const api: ApiForPlugin<TState, TTransitions> = {
@@ -33,7 +32,7 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 
 	const builder: Builder<TState, TTransitions, TPlugins> = {
 		register(plugin) {
-			const {name, api: pluginApi} = plugin(api);
+			const { name, api: pluginApi } = plugin(api);
 
 			if (name in methods) {
 				eventEmitter.emit('error', `There are at least two plugins with the same name: "${name}"`);
@@ -50,10 +49,12 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 	return builder;
 };
 
-export const makePluginsMethods = <TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>>
-(plugins: Ulx<TPlugins>, eventEmitter: EventEmitter<TState, TTransitions>, stateMethods: StateMethods<TState>): PluginsMethods<TState, TTransitions, TPlugins> => {
+export const makePluginsMethods = <TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>>(
+	plugins: Ulx<TPlugins>,
+	eventEmitter: EventEmitter<TState, TTransitions>,
+	stateMethods: StateMethods<TState>,
+): PluginsMethods<TState, TTransitions, TPlugins> => {
 	const builder = makeBuilder<TState, TTransitions, TPlugins>(eventEmitter, stateMethods);
 	(plugins ?? []).forEach(builder.register);
 	return builder.make();
 };
-

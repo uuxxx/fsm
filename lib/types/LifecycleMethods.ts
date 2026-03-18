@@ -1,9 +1,6 @@
-import type {
-	AnyFn,
-	Entries, Key, Rec, Vdx,
-} from '@uuxxx/utils';
-import type {Transition} from './Transition';
-import type {Label} from './Label';
+import type { AnyFn, Entries, Key, Rec, Vdx } from '@uuxxx/utils';
+import type { Transition } from './Transition';
+import type { Label } from './Label';
 
 export type Lifecycle<TState extends Label, TEntry extends [Key, Transition<Label>]> = {
 	args?: Parameters<Extract<TEntry[1]['to'], AnyFn>>;
@@ -12,11 +9,9 @@ export type Lifecycle<TState extends Label, TEntry extends [Key, Transition<Labe
 	to: TState;
 };
 
-type LifecycleMethod<TState extends Label, TTransitions extends Rec<Transition<TState>>>
-	= (lifecycle: Lifecycle<TState, Entries<TTransitions>>) => void;
+type LifecycleMethod<TState extends Label, TTransitions extends Rec<Transition<TState>>> = (lifecycle: Lifecycle<TState, Entries<TTransitions>>) => void;
 
-type CancelableLifecycleMethod<TState extends Label, TTransitions extends Rec<Transition<TState>>>
-	= (lifecycle: Lifecycle<TState, Entries<TTransitions>>) => Vdx<boolean>;
+type CancelableLifecycleMethod<TState extends Label, TTransitions extends Rec<Transition<TState>>> = (lifecycle: Lifecycle<TState, Entries<TTransitions>>) => Vdx<boolean>;
 
 export type LifecycleMethods<TState extends Label, TTransitions extends Rec<Transition<TState>>> = {
 	onBeforeTransition?: CancelableLifecycleMethod<TState, TTransitions>;

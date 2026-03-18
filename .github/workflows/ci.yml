@@ -50,3 +50,6 @@ jobs:
       - name: lint
         if: (${{ success() }} || ${{ failure() }})
         run: pnpm lint
+      - name: format
+        if: (${{ success() }} || ${{ failure() }})
+        run: pnpm fmt:check

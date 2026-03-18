@@ -1,7 +1,7 @@
-import {tap, type Rec} from '@uuxxx/utils';
-import {makeFsm} from '../lib/core/fsm';
-import type {Transition} from '../lib/types/Transition';
-import type {Config} from '../lib/types/Config';
+import { tap, type Rec } from '@uuxxx/utils';
+import { makeFsm } from '../lib/core/fsm';
+import type { Transition } from '../lib/types/Transition';
+import type { Config } from '../lib/types/Config';
 
 const onBeforeTransition = vitest.fn();
 const onBeforeTransitionCancel = vitest.fn((..._args: any[]) => false);
@@ -110,7 +110,7 @@ describe('lifecycle', () => {
 			});
 		});
 
-		test('isn\'t called on circular transition', () => {
+		test("isn't called on circular transition", () => {
 			const fsm = makeFsm(CONFIG);
 			fsm.goto('a');
 
@@ -161,7 +161,7 @@ describe('lifecycle', () => {
 			});
 		});
 
-		test('isn\'t called on circular transition', () => {
+		test("isn't called on circular transition", () => {
 			const fsm = makeFsm(CONFIG);
 			fsm.goto('a');
 

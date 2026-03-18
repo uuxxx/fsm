@@ -9,6 +9,9 @@ pre-push:
     - name: lint
       run: pnpm lint
 
+    - name: format
+      run: pnpm fmt:check
+
     - name: test
       run: pnpm test
 
@@ -20,6 +23,9 @@ pre-commit:
 
     - name: lint
       run: pnpm lint
+
+    - name: format
+      run: pnpm fmt:check
 
     - name: test
       run: pnpm test

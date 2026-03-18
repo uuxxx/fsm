@@ -1,8 +1,8 @@
-import {type Rec, type Ulx} from '@uuxxx/utils';
-import {makeFsm} from '../lib/core/fsm';
-import type {Config} from '../lib/types/Config';
-import type {Transition} from '../lib/types/Transition';
-import type {Plugin} from '../lib/types/Plugin';
+import { type Rec, type Ulx } from '@uuxxx/utils';
+import { makeFsm } from '../lib/core/fsm';
+import type { Config } from '../lib/types/Config';
+import type { Transition } from '../lib/types/Transition';
+import type { Plugin } from '../lib/types/Plugin';
 
 type State = 'a' | 'b';
 
@@ -27,24 +27,21 @@ const MOCK_FN = {
 	onAfterTransition: vitest.fn(),
 } as const;
 
-const testPlugin = ((mocks = MOCK_FN) => api => {
-	api.init(mocks.init);
-	api.onBeforeTransition(mocks.onBeforeTransition);
-	api.onAfterTransition(mocks.onAfterTransition);
+const testPlugin = ((mocks = MOCK_FN) =>
+	(api) => {
+		api.init(mocks.init);
+		api.onBeforeTransition(mocks.onBeforeTransition);
+		api.onAfterTransition(mocks.onAfterTransition);
 
-	return {
-		name: 'test-plugin' as const,
-		api: {
-			show: (): State[] => STATES,
-		},
-	};
-}) satisfies (mocks?: typeof MOCK_FN) => Plugin<State, typeof TRANSITIONS>;
+		return {
+			name: 'test-plugin' as const,
+			api: {
+				show: (): State[] => STATES,
+			},
+		};
+	}) satisfies (mocks?: typeof MOCK_FN) => Plugin<State, typeof TRANSITIONS>;
 
-const CONFIG: Config<
-	State,
-  typeof TRANSITIONS,
-  Array<ReturnType<typeof testPlugin>>
-> = {
+const CONFIG: Config<State, typeof TRANSITIONS, Array<ReturnType<typeof testPlugin>>> = {
 	init: INIT,
 	states: STATES,
 	transitions: TRANSITIONS,
@@ -52,13 +49,12 @@ const CONFIG: Config<
 };
 
 beforeEach(() => {
-	Object.values(MOCK_FN).forEach(mock => mock.mockClear());
+	Object.values(MOCK_FN).forEach((mock) => mock.mockClear());
 });
 
 describe('plugins', () => {
 	test('throws on >= 2 plugins registered with the same name', () => {
-		expect(() =>
-			makeFsm({...CONFIG, plugins: [testPlugin(), testPlugin()]})).toThrowErrorMatchingInlineSnapshot('[Error: [FSM]: There are at least two plugins with the same name: "test-plugin"]');
+		expect(() => makeFsm({ ...CONFIG, plugins: [testPlugin(), testPlugin()] })).toThrowErrorMatchingInlineSnapshot('[Error: [FSM]: There are at least two plugins with the same name: "test-plugin"]');
 	});
 
 	test('plugin user api is available and working', () => {
@@ -71,14 +67,17 @@ describe('plugins', () => {
 			let allStates: Ulx<State[]>;
 
 			makeFsm({
-				...CONFIG, plugins: [api => {
-					allStates = api.allStates();
+				...CONFIG,
+				plugins: [
+					(api) => {
+						allStates = api.allStates();
 
-					return {
-						name: 'test-plugin',
-						api: {},
-					};
-				}],
+						return {
+							name: 'test-plugin',
+							api: {},
+						};
+					},
+				],
 			});
 
 			expect(allStates).toEqual(['a', 'b']);
@@ -86,14 +85,17 @@ describe('plugins', () => {
 
 		test('state', () => {
 			const fsm = makeFsm({
-				...CONFIG, plugins: [api => ({
-					name: 'test-plugin' as const,
-					api: {
-						state() {
-							return api.state();
+				...CONFIG,
+				plugins: [
+					(api) => ({
+						name: 'test-plugin' as const,
+						api: {
+							state() {
+								return api.state();
+							},
 						},
-					},
-				})],
+					}),
+				],
 			});
 
 			fsm['a -> b']();
@@ -119,14 +121,16 @@ describe('plugins', () => {
 		});
 
 		test('onBeforeTransition cancel transition', () => {
-			const onBeforeTransition = vitest.fn(_lifecycle => false);
+			const onBeforeTransition = vitest.fn((_lifecycle) => false);
 
 			const fsm = makeFsm({
 				...CONFIG,
-				plugins: [testPlugin({
-					...MOCK_FN,
-					onBeforeTransition,
-				})],
+				plugins: [
+					testPlugin({
+						...MOCK_FN,
+						onBeforeTransition,
+					}),
+				],
 			});
 
 			fsm['a -> b']();

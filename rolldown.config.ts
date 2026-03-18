@@ -1,6 +1,6 @@
-import {defineConfig, type InputOption} from 'rolldown';
-import {dts} from 'rolldown-plugin-dts';
-import {minify} from 'rollup-plugin-swc3';
+import { defineConfig, type InputOption } from 'rolldown';
+import { dts } from 'rolldown-plugin-dts';
+import { minify } from 'rollup-plugin-swc3';
 
 const INPUT: InputOption = {
 	index: 'lib/index.ts',
