@@ -25,9 +25,13 @@ export const makeFsm = <TState extends Label, TTransitions extends Rec<Transitio
 		state = to;
 	});
 
-	eventEmitter.listen('error', (msg) => {
-		throw new Error(`[FSM]: ${msg}`);
-	});
+	eventEmitter.listen(
+		'error',
+		config.onError ??
+			((msg) => {
+				throw new Error(`[FSM]: ${msg}`);
+			}),
+	);
 
 	const stateMethods: StateMethods<TState> = {
 		state: () => state,

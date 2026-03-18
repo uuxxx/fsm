@@ -6,6 +6,7 @@ import type { Transition } from './Transition';
 
 export type ApiForPlugin<TState extends Label, TTransitions extends Rec<Transition<TState>>> = {
 	init: (listener: (state: TState) => void) => void;
+	onError: (listener: (msg: string) => void) => Noop;
 } & StateMethods<TState> & {
 		[K in KeyOf<LifecycleMethods<TState, TTransitions>>]-?: (listener: LifecycleMethods<TState, TTransitions>[K]) => Noop;
 	};
