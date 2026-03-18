@@ -1,5 +1,11 @@
 # @uuxxx/fsm
 
+## 1.2.4
+
+### Patch Changes
+
+- 429f202: feat: add custom error-handling
+
 ## 1.2.3
 
 ### Patch Changes
