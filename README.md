@@ -2,7 +2,16 @@
 
 [![npm version](https://badge.fury.io/js/@uuxxx%2Ffsm.svg)](https://badge.fury.io/js/@uuxxx%2Ffsm)
 
-A lightweight, type-safe finite state machine library for JavaScript/TypeScript with plugin support and lifecycle hooks.
+A lightweight, type-safe finite state machine library for TypeScript with plugin support, lifecycle hooks, and full type inference.
+
+## Features
+
+- **Full type inference** — transition methods, states, and plugin APIs are auto-generated from config
+- **Multiple transition types** — static, dynamic, async, wildcard (`*`), and multi-source
+- **Lifecycle hooks** — `onBeforeTransition` (with veto) and `onAfterTransition`
+- **Plugin system** — extend your FSM with custom APIs
+- **Custom error handling** — provide an `onError` callback or let errors throw
+- **Zero dependencies** aside from `@uuxxx/utils`
 
 ## Installation
 
@@ -21,11 +30,9 @@ import { makeFsm } from '@uuxxx/fsm';
 
 type State = 'idle' | 'loading' | 'success' | 'error';
 
-const STATES: State[] = ['idle', 'loading', 'success', 'error'];
-
 const fsm = makeFsm({
 	init: 'idle',
-	states: STATES,
+	states: ['idle', 'loading', 'success', 'error'] as State[],
 	transitions: {
 		start: {
 			from: 'idle',
@@ -50,22 +57,14 @@ const fsm = makeFsm({
 	},
 });
 
-// Check current state
-console.log(fsm.state()); // 'idle'
-
-// Perform transitions
-fsm.start();
-console.log(fsm.state()); // 'loading'
-
-fsm.succeed();
-console.log(fsm.state()); // 'success'
-
-fsm.reset();
-console.log(fsm.state()); // 'idle'
-
-fsm.goto('error');
-console.log(fsm.state()); // 'error'
+fsm.state(); // 'idle'
+fsm.start(); // 'loading'
+fsm.succeed(); // 'success'
+fsm.reset(); // 'idle'
+fsm.goto('error'); // 'error'
 ```
+
+Each transition key becomes a method on the FSM instance with the correct type signature inferred from config.
 
 ## API Reference
 
@@ -73,18 +72,24 @@ console.log(fsm.state()); // 'error'
 
 Creates a new finite state machine instance.
 
-#### Parameters
+#### Config
 
-- `config`: Configuration object with the following properties:
-  - `init`: Initial state
-  - `states`: Array of all possible states
-  - `transitions`: Object defining state transitions
-  - `methods?`: Optional lifecycle methods
-  - `plugins?`: Optional array of plugins
+| Property      | Type                                          | Required | Description                                                                   |
+| ------------- | --------------------------------------------- | -------- | ----------------------------------------------------------------------------- |
+| `init`        | `TState`                                      | Yes      | Initial state                                                                 |
+| `states`      | `TState[]`                                    | Yes      | All valid states                                                              |
+| `transitions` | `Record<string, Transition<TState>>`          | Yes      | Transition definitions (keys become methods)                                  |
+| `methods`     | `{ onBeforeTransition?, onAfterTransition? }` | No       | Lifecycle hooks                                                               |
+| `plugins`     | `Plugin[]`                                    | No       | Array of plugins                                                              |
+| `onError`     | `(msg: string) => void`                       | No       | Custom error handler. By default, errors throw `Error` with a `[FSM]:` prefix |
 
 #### Returns
 
-An FSM instance with transition methods, state methods, and plugin APIs.
+An FSM instance combining:
+
+- **State methods** — `state()`, `allStates()`
+- **Transition methods** — one per key in `transitions`
+- **Plugin APIs** — one namespace per plugin
 
 ### State Methods
 
@@ -92,17 +97,9 @@ An FSM instance with transition methods, state methods, and plugin APIs.
 
 Returns the current state.
 
-```typescript
-const currentState = fsm.state();
-```
-
 #### `fsm.allStates()`
 
-Returns an array of all possible states.
-
-```typescript
-const allStates = fsm.allStates();
-```
+Returns an array of all valid states.
 
 ### Transitions
 
@@ -115,21 +112,36 @@ type Transition<TState> = {
 };
 ```
 
-- `from`: The state(s) this transition can occur from
-  - Single state: `'idle'`
-  - Multiple states: `['loading', 'error']`
-  - Any state: `'*'`
-- `to`: The target state or a function returning the target state
-  - Static: `'loading'`
-  - Dynamic: `(userId: string) => \`user\_\${userId}\``
-  - Async: `async (data) => await apiCall(data)`
+#### `from` — source state(s)
+
+| Form            | Example                | Description           |
+| --------------- | ---------------------- | --------------------- |
+| Single state    | `'idle'`               | Only from this state  |
+| Multiple states | `['loading', 'error']` | From any listed state |
+| Wildcard        | `'*'`                  | From any state        |
+
+#### `to` — target state
+
+| Form    | Example                           | Description                      |
+| ------- | --------------------------------- | -------------------------------- |
+| Static  | `'loading'`                       | Always transitions to this state |
+| Dynamic | `(id: string) => \`user\_${id}\`` | Compute target from arguments    |
+| Async   | `async () => await fetchState()`  | Returns `Promise<TState>`        |
+
+#### Transition behavior
+
+- **Circular transitions are skipped** — if `from === to`, the transition is silently canceled with a warning.
+- **Concurrent async transitions are blocked** — starting a new transition while an async one is pending triggers an error.
+- **Invalid target states** — transitioning to a state not in `states` triggers an error.
+- **Forbidden transitions** — calling a transition from a state not matching `from` triggers an error.
+- **Return value** — every transition method returns the new state (or `Promise<TState>` for async transitions).
 
 #### Examples
 
 ```typescript
 const transitions = {
-	// Simple transition
-	'idle -> loading': {
+	// Static transition
+	start: {
 		from: 'idle',
 		to: 'loading',
 	},
@@ -143,84 +155,113 @@ const transitions = {
 	// Wildcard (from any state)
 	goto: {
 		from: '*',
-		to: (targetState: State) => targetState,
+		to: (target: State) => target,
 	},
 
 	// Async transition
-	'async fetch': {
+	fetch: {
 		from: 'idle',
 		to: async () => {
 			const result = await fetchData();
-			return result.success ? 'success' : 'error';
+			return result.ok ? 'success' : 'error';
 		},
 	},
 };
 ```
+
+### Error Handling
+
+By default, the FSM throws on errors (forbidden transitions, invalid states, concurrent transitions). You can provide a custom `onError` handler to change this behavior:
+
+```typescript
+const fsm = makeFsm({
+	init: 'idle',
+	states: ['idle', 'loading'],
+	transitions: {
+		start: { from: 'idle', to: 'loading' },
+		stop: { from: 'loading', to: 'idle' },
+	},
+	onError: (msg) => {
+		console.warn(msg); // Handle gracefully instead of throwing
+	},
+});
+
+// Won't throw — calls onError instead
+fsm.stop(); // "idle" → "idle" via "stop" is forbidden (from doesn't match)
+```
+
+When `onError` is provided, the FSM state remains unchanged after an error.
 
 ### Lifecycle Methods
 
-Lifecycle methods can be attached to the FSM configuration:
+Lifecycle methods hook into the transition process:
 
 ```typescript
-const config = {
-	// ... other config
+const fsm = makeFsm({
+	// ...
 	methods: {
 		onBeforeTransition: (event) => {
-			console.log('About to transition:', event);
-			// Return false to cancel the transition
-			return true;
+			console.log(`${event.from} → ${event.to} via ${event.transition}`);
+			return false; // Return false to cancel the transition
 		},
 		onAfterTransition: (event) => {
-			console.log('Transition completed:', event);
+			console.log('Transition complete:', event.transition);
 		},
 	},
-};
+});
 ```
+
+#### Lifecycle event object
+
+| Property     | Type                 | Description                             |
+| ------------ | -------------------- | --------------------------------------- |
+| `transition` | `string`             | Name of the transition (the config key) |
+| `from`       | `TState`             | State before the transition             |
+| `to`         | `TState`             | Target state                            |
+| `args`       | `any[] \| undefined` | Arguments passed to dynamic transitions |
 
 #### `onBeforeTransition(event)`
 
-Called before a transition occurs. Return `false` to cancel the transition.
-
-**Parameters:**
-
-- `event`: Object with `transition`, `from`, `to`, and optional `args`
+Called before a transition. Return `false` to veto (cancel) the transition.
 
 #### `onAfterTransition(event)`
 
-Called after a successful transition.
-
-**Parameters:**
-
-- `event`: Object with `transition`, `from`, `to`, and optional `args`
+Called after a successful transition. The FSM state is already updated at this point.
 
 ## Plugins
 
-Plugins extend the FSM with additional functionality. Each plugin receives an API object and returns a plugin definition.
+Plugins extend the FSM with additional methods, grouped under a namespace.
 
 ### Plugin API
 
-Plugins have access to:
+Each plugin receives an `api` object with:
 
-- `api.state()`: Get current state
-- `api.allStates()`: Get all states
-- `api.init(callback)`: Register initialization callback
-- `api.onBeforeTransition(callback)`: Register before transition callback
-- `api.onAfterTransition(callback)`: Register after transition callback
+| Method                             | Description                                                       |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `api.state()`                      | Get current state                                                 |
+| `api.allStates()`                  | Get all valid states                                              |
+| `api.init(callback)`               | Run callback when FSM is created (receives initial state)         |
+| `api.onBeforeTransition(callback)` | Register before-transition listener. Returns unsubscribe function |
+| `api.onAfterTransition(callback)`  | Register after-transition listener. Returns unsubscribe function  |
+| `api.onError(callback)`            | Register error listener. Returns unsubscribe function             |
 
 ### Creating a Plugin
 
 ```typescript
 import type { FsmLabel, FsmPlugin, FsmTransition } from '@uuxxx/fsm';
 
-export const somePlugin = <TState extends FsmLabel, TTransitions extends Record<string, FsmTransition<TState>>>() =>
+export const myPlugin = <TState extends FsmLabel, TTransitions extends Record<string, FsmTransition<TState>>>() =>
 	((api) => {
-		// ... plugin code
+		let count = 0;
+
+		api.onAfterTransition(() => {
+			count++;
+		});
 
 		return {
-			// replace with your plugin name
-			name: 'plugin-name' as const,
+			name: 'counter' as const,
 			api: {
-				// ... plugin methods
+				getCount: () => count,
 			},
 		};
 	}) satisfies FsmPlugin<TState, TTransitions>;
@@ -229,54 +270,73 @@ export const somePlugin = <TState extends FsmLabel, TTransitions extends Record<
 ### Using Plugins
 
 ```typescript
-const config = {
-	// ... other config
-	plugins: [somePlugin({ someOption: true })],
-};
+const fsm = makeFsm({
+	// ...
+	plugins: [myPlugin()],
+});
 
-const fsm = makeFsm(config);
-
-// Access plugin API
-const currentState = fsm['plugin-name'].doSomething();
+fsm.start();
+fsm.counter.getCount(); // 1
 ```
+
+Plugin names must be unique — registering two plugins with the same name triggers an error.
 
 ## Built-in Plugins
 
 ### History Plugin
 
-Tracks state history and provides navigation methods.
+Tracks state history with pointer-based navigation.
 
 ```typescript
 import { makeFsm } from '@uuxxx/fsm';
 import { fsmHistoryPlugin } from '@uuxxx/fsm/history-plugin';
 
-const config = {
-	// ... config
+const fsm = makeFsm({
+	init: 'a',
+	states: ['a', 'b', 'c'],
+	transitions: {
+		goto: { from: '*', to: (s: 'a' | 'b' | 'c') => s },
+	},
 	plugins: [fsmHistoryPlugin()],
-};
+});
 
-const fsm = makeFsm(config);
+fsm.goto('b');
+fsm.goto('c');
+fsm.history.get(); // ['a', 'b', 'c']
 
-// Navigate
-fsm.goto('state1');
-fsm.goto('state2');
-
-// History API
-console.log(fsm.history.get()); // Get all history
-
-fsm.history.back(1); // Get 1 step back
-fsm.history.forward(1); // Get 1 step forward
+fsm.history.back(1); // returns 'b'
+fsm.history.back(1); // returns 'a'
+fsm.history.forward(2); // returns 'c'
 ```
 
-#### History API Methods
+#### History API
 
-- `fsm.history.get()`: Get the full history array
-- `fsm.history.back(steps?)`: Get N step back (default: 1)
-- `fsm.history.forward(steps?)`: Get N step forward (default: 1)
+| Method                       | Returns    | Description                                                                        |
+| ---------------------------- | ---------- | ---------------------------------------------------------------------------------- |
+| `fsm.history.get()`          | `TState[]` | Full history array                                                                 |
+| `fsm.history.back(steps)`    | `TState`   | Move pointer back by `steps`, returns the state at that position. Clamps to start  |
+| `fsm.history.forward(steps)` | `TState`   | Move pointer forward by `steps`, returns the state at that position. Clamps to end |
+
+> **Note:** `back()` and `forward()` move the internal history pointer and return the state at that position. They do **not** trigger a state transition on the FSM — use transition methods if you need to change the actual FSM state.
+
+When a transition occurs, any forward history after the current pointer is discarded (like browser navigation).
+
+## Exported Types
+
+The library exports the following types for use in plugins and generic code:
+
+```typescript
+import type {
+	FsmConfig, // Config<TState, TTransitions, TPlugins>
+	FsmTransition, // Transition<TState>
+	FsmPlugin, // Plugin<TState, TTransitions>
+	FsmLabel, // string (state label type)
+} from '@uuxxx/fsm';
+```
 
 ## TypeScript Support
 
-The library is fully typed. Type inference works automatically:
+The library is built with TypeScript-first design. All types are inferred from config — no manual type annotations needed:
 
 ```typescript
 const fsm = makeFsm({
@@ -287,5 +347,12 @@ const fsm = makeFsm({
 		stop: { from: 'running', to: 'stopped' },
 	},
 });
-// fsm is fully typed - autocomplete works for transitions and states
+
+fsm.start(); // ✓ typed — only callable from 'idle'
+fsm.stop(); // ✓ typed — only callable from 'running'
+fsm.state(); // ✓ returns 'idle' | 'running' | 'stopped'
 ```
+
+## License
+
+[MIT](./LICENSE)

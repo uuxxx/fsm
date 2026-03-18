@@ -10,6 +10,28 @@ import type { StateMethods } from '../types/StateMethods';
 import type { Transition } from '../types/Transition';
 import { type KeyOf, type Rec } from '@uuxxx/utils';
 
+/**
+ * Creates a finite state machine instance from the given configuration.
+ *
+ * Returns an object combining state methods (`state()`, `allStates()`),
+ * auto-generated transition methods (one per key in `config.transitions`),
+ * and plugin APIs (one namespace per plugin).
+ *
+ * @example
+ * ```ts
+ * const fsm = makeFsm({
+ *   init: 'idle',
+ *   states: ['idle', 'loading', 'done'],
+ *   transitions: {
+ *     start: { from: 'idle', to: 'loading' },
+ *     finish: { from: 'loading', to: 'done' },
+ *   },
+ * });
+ *
+ * fsm.start();  // 'loading'
+ * fsm.finish(); // 'done'
+ * ```
+ */
 export const makeFsm = <TState extends Label, TTransitions extends Rec<Transition<TState>>, TPlugins extends Array<Plugin<TState, TTransitions>>>(
 	config: Config<TState, TTransitions, TPlugins>,
 ): Methods<TState, TTransitions, TPlugins> => {
