@@ -12,11 +12,15 @@
 		"fmt:check": "oxfmt --check .",
 		"check:types": "pnpm -r check:types"
 	},
+	"dependencies": {
+		"@uuxxx/utils": "^0.0.3"
+	},
 	"devDependencies": {
 		"@babel/core": "^7.28.4",
 		"@babel/preset-env": "^7.28.3",
 		"@babel/preset-typescript": "^7.27.1",
 		"@changesets/cli": "^2.29.7",
+		"jsdom": "^29.0.1",
 		"lefthook": "^2.0.2",
 		"oxfmt": "^0.41.0",
 		"oxlint": "^1.0.0",
