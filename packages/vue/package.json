@@ -36,7 +36,8 @@
 		"check:types": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@uuxxx/fsm": "workspace:*"
+		"@uuxxx/fsm": "workspace:*",
+		"@uuxxx/utils": "^0.0.3"
 	},
 	"devDependencies": {
 		"@swc/core": "^1.13.5",

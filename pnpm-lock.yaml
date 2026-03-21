@@ -122,6 +122,9 @@ importers:
       '@uuxxx/fsm':
         specifier: workspace:*
         version: link:../core
+      '@uuxxx/utils':
+        specifier: ^0.0.3
+        version: 0.0.3
     devDependencies:
       '@swc/core':
         specifier: ^1.13.5

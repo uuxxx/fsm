@@ -53,17 +53,17 @@ beforeEach(() => {
 });
 
 describe('plugins', () => {
-	test('throws on >= 2 plugins registered with the same name', () => {
+	it('throws on >= 2 plugins registered with the same name', () => {
 		expect(() => makeFsm({ ...CONFIG, plugins: [testPlugin(), testPlugin()] })).toThrowErrorMatchingInlineSnapshot('[Error: [FSM]: There are at least two plugins with the same name: "test-plugin"]');
 	});
 
-	test('plugin user api is available and working', () => {
+	it('plugin user api is available and working', () => {
 		const fsm = makeFsm(CONFIG);
 		expect(fsm['test-plugin'].show()).toEqual(STATES);
 	});
 
 	describe('plugin api', () => {
-		test('allStates', () => {
+		it('allStates', () => {
 			let allStates: Ulx<State[]>;
 
 			makeFsm({
@@ -83,7 +83,7 @@ describe('plugins', () => {
 			expect(allStates).toEqual(['a', 'b']);
 		});
 
-		test('state', () => {
+		it('state', () => {
 			const fsm = makeFsm({
 				...CONFIG,
 				plugins: [
@@ -102,13 +102,13 @@ describe('plugins', () => {
 			expect(fsm['test-plugin'].state()).toEqual('b');
 		});
 
-		test('init method is called', () => {
+		it('init method is called', () => {
 			makeFsm(CONFIG);
 			expect(MOCK_FN.init.mock.calls).toHaveLength(1);
 			expect(MOCK_FN.init.mock.calls[0][0]).toEqual(CONFIG.init);
 		});
 
-		test('onBeforeTransition is called', () => {
+		it('onBeforeTransition is called', () => {
 			const fsm = makeFsm(CONFIG);
 			fsm['a -> b']();
 			expect(MOCK_FN.onBeforeTransition.mock.calls).toHaveLength(1);
@@ -120,7 +120,7 @@ describe('plugins', () => {
 			expect(fsm.state()).toBe('b');
 		});
 
-		test('onBeforeTransition cancel transition', () => {
+		it('onBeforeTransition cancel transition', () => {
 			const onBeforeTransition = vitest.fn((_lifecycle) => false);
 
 			const fsm = makeFsm({
@@ -143,7 +143,7 @@ describe('plugins', () => {
 			expect(fsm.state()).toBe('a');
 		});
 
-		test('onAfterTransition is called', () => {
+		it('onAfterTransition is called', () => {
 			const fsm = makeFsm(CONFIG);
 			fsm['a -> b']();
 			expect(MOCK_FN.onAfterTransition.mock.calls).toHaveLength(1);
@@ -155,7 +155,7 @@ describe('plugins', () => {
 			expect(fsm.state()).toBe('b');
 		});
 
-		test('onError listener receives error messages', () => {
+		it('onError listener receives error messages', () => {
 			const onErrorMock = vitest.fn();
 
 			const fsm = makeFsm({
@@ -177,7 +177,7 @@ describe('plugins', () => {
 			expect(onErrorMock).toHaveBeenCalledWith('Transition: "b -> a" is forbidden');
 		});
 
-		test('onError unsubscribe works', () => {
+		it('onError unsubscribe works', () => {
 			const onErrorMock = vitest.fn();
 
 			let unsubscribe: () => void;

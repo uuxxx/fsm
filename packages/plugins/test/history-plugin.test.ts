@@ -23,7 +23,7 @@ const CONFIG = {
 } satisfies Config<State, typeof TRANSITIONS, Array<Plugin<State, typeof TRANSITIONS>>>;
 
 describe('history-plugin', () => {
-	test('scenario #1', () => {
+	it('scenario #1', () => {
 		const fsm = makeFsm(CONFIG);
 		expect(fsm.history.get()).toEqual(['leetcode.com']);
 		fsm.goto('google.com');
