@@ -44,7 +44,7 @@ Heavy use of mapped types and generics. `Methods<TState, TTransitions, TPlugins>
 
 ### Plugins (`packages/plugins/lib/`)
 
-- **History plugin** (`history.ts`) — tracks state history with back/forward navigation. Published as `@uuxxx/fsm-plugins`.
+- **History plugin** (`history.ts`) — read-only state history tracking with pointer-based back/forward navigation. `back()`/`forward()` move the pointer but do not change FSM state. Published as `@uuxxx/fsm-plugins`.
 
 ### External dependency: `@uuxxx/utils`
 

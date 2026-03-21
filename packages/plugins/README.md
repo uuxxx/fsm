@@ -4,7 +4,9 @@ Official plugins for [@uuxxx/fsm](https://github.com/uuxxx/fsm).
 
 ## History Plugin
 
-Tracks state history with back/forward navigation.
+Read-only state history tracking with pointer-based back/forward navigation.
+
+`back()` and `forward()` move an internal pointer and return the state at that position — they do **not** change the FSM state. Use transition methods to actually navigate (e.g. `fsm.goto(fsm.history.back(1))`).
 
 ```ts
 import { makeFsm } from '@uuxxx/fsm';
@@ -20,5 +22,8 @@ const fsm = makeFsm({
 fsm.goto('b');
 fsm.goto('c');
 fsm.history.get(); // ['a', 'b', 'c']
-fsm.history.back(1); // 'b'
+fsm.history.back(1); // 'b' (pointer moved, FSM state unchanged)
+fsm.history.canBack(); // true
+fsm.history.current(); // 'b'
+fsm.goto(fsm.history.current()); // actually transition to 'b'
 ```

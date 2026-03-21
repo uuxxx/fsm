@@ -124,7 +124,9 @@ fsm.goto('c');
 
 fsm.state.value; // 'c'
 fsm.history.get(); // ['a', 'b', 'c']
-fsm.history.back(1); // 'b'
+fsm.history.back(1); // 'b' (pointer moved, FSM state unchanged)
+fsm.history.canBack(); // true
+fsm.goto(fsm.history.current()); // actually transition to 'b'
 ```
 
 ## Exports

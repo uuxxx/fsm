@@ -147,8 +147,12 @@ function App() {
 		<div>
 			<p>State: {fsm.state}</p>
 			<button onClick={() => fsm.goto('b')}>Go to B</button>
-			<button onClick={() => fsm.history.back(1)}>Back</button>
-			<button onClick={() => fsm.history.forward(1)}>Forward</button>
+			<button disabled={!fsm.history.canBack()} onClick={() => fsm.goto(fsm.history.back(1))}>
+				Back
+			</button>
+			<button disabled={!fsm.history.canForward()} onClick={() => fsm.goto(fsm.history.forward(1))}>
+				Forward
+			</button>
 			<p>History: {fsm.history.get().join(' -> ')}</p>
 		</div>
 	);
