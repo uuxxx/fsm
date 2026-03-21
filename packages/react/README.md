@@ -60,7 +60,7 @@ Uses `useSyncExternalStore` under the hood, so state updates are concurrent-mode
 | Property             | Type              | Description                                        |
 | -------------------- | ----------------- | -------------------------------------------------- |
 | `state`              | `TState`          | Current state — triggers re-render on change       |
-| `allStates`          | `TState[]`        | Static array of all valid states                   |
+| `allStates()`        | `() => TState[]`  | Returns array of all valid states                  |
 | _transition methods_ | From config keys  | One method per transition, same signatures as core |
 | _plugin APIs_        | From plugin names | One namespace per plugin                           |
 

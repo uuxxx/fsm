@@ -28,7 +28,7 @@ describe('useFsm', () => {
 
 	it('should return all states as a static array', () => {
 		const fsm = useFsm({ init: 'a', states: STATES, transitions: TRANSITIONS });
-		expect(fsm.allStates).toEqual(['a', 'b', 'c']);
+		expect(fsm.allStates()).toEqual(['a', 'b', 'c']);
 	});
 
 	it('should update state ref after sync transition', () => {
