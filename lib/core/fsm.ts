@@ -36,7 +36,10 @@ export const makeFsm = <TState extends Label, TTransitions extends Rec<Transitio
 	config: Config<TState, TTransitions, TPlugins>,
 ): Methods<TState, TTransitions, TPlugins> => {
 	let state: TState = config.init;
-	const states = config.states.includes(config.init) ? [...config.states] : [...config.states, config.init];
+	const states = [...config.states];
+	if (!states.includes(config.init)) {
+		states.push(config.init);
+	}
 	const eventEmitter = makeEventEmitter<TState, TTransitions>();
 
 	Object.entries(config.methods ?? {}).forEach(([name, method]) => {
