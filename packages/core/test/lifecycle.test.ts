@@ -48,7 +48,7 @@ beforeEach(() => {
 
 describe('lifecycle', () => {
 	describe('onBeforeTransition', () => {
-		test('sync transition, no args', () => {
+		it('sync transition, no args', () => {
 			const fsm = makeFsm(CONFIG);
 			fsm['a -> b']();
 
@@ -61,7 +61,7 @@ describe('lifecycle', () => {
 			});
 		});
 
-		test('sync transition, has args', () => {
+		it('sync transition, has args', () => {
 			const fsm = makeFsm(CONFIG);
 			fsm.goto('b');
 
@@ -75,7 +75,7 @@ describe('lifecycle', () => {
 			});
 		});
 
-		test('async transition, has args', async () => {
+		it('async transition, has args', async () => {
 			const fsm = makeFsm(CONFIG);
 			await fsm['async goto']('d');
 
@@ -89,7 +89,7 @@ describe('lifecycle', () => {
 			});
 		});
 
-		test('cancelable transition', async () => {
+		it('cancelable transition', async () => {
 			const fsm = makeFsm({
 				...CONFIG,
 				methods: {
@@ -110,7 +110,7 @@ describe('lifecycle', () => {
 			});
 		});
 
-		test("isn't called on circular transition", () => {
+		it("isn't called on circular transition", () => {
 			const fsm = makeFsm(CONFIG);
 			fsm.goto('a');
 
@@ -120,7 +120,7 @@ describe('lifecycle', () => {
 	});
 
 	describe('onAfterTransition', () => {
-		test('sync transition, no args', () => {
+		it('sync transition, no args', () => {
 			const fsm = makeFsm(CONFIG);
 			fsm['a -> b']();
 
@@ -133,7 +133,7 @@ describe('lifecycle', () => {
 			});
 		});
 
-		test('sync transition, has args', () => {
+		it('sync transition, has args', () => {
 			const fsm = makeFsm(CONFIG);
 			fsm.goto('b');
 
@@ -147,7 +147,7 @@ describe('lifecycle', () => {
 			});
 		});
 
-		test('async transition, has args', async () => {
+		it('async transition, has args', async () => {
 			const fsm = makeFsm(CONFIG);
 			await fsm['async goto']('d');
 
@@ -161,7 +161,7 @@ describe('lifecycle', () => {
 			});
 		});
 
-		test("isn't called on circular transition", () => {
+		it("isn't called on circular transition", () => {
 			const fsm = makeFsm(CONFIG);
 			fsm.goto('a');
 

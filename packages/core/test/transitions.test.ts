@@ -44,24 +44,24 @@ const CONFIG: Config<State, typeof TRANSITIONS> = {
 
 describe('transitions', () => {
 	describe('common scenarios', () => {
-		test('set valid init state', () => {
+		it('set valid init state', () => {
 			expect(makeFsm(CONFIG).state()).toBe('a');
 		});
 
-		test("add init state to states if init state isn't in states", () => {
+		it("add init state to states if init state isn't in states", () => {
 			// @ts-expect-error for testing
 			const fsm = makeFsm({ ...CONFIG, init: 'e' });
 			expect(fsm.allStates().includes('e' as State)).toBeTruthy();
 		});
 
-		test('a -> b', () => {
+		it('a -> b', () => {
 			const fsm = makeFsm(CONFIG);
 			const state = fsm['a -> b']();
 			expect(fsm.state()).toBe('b');
 			expect(state).toBe('b');
 		});
 
-		test('b -> a', () => {
+		it('b -> a', () => {
 			const fsm = makeFsm({
 				...CONFIG,
 				init: 'b',
@@ -72,21 +72,21 @@ describe('transitions', () => {
 			expect(state).toBe('a');
 		});
 
-		test('goto', () => {
+		it('goto', () => {
 			const fsm = makeFsm(CONFIG);
 			const state = fsm.goto('d');
 			expect(fsm.state()).toBe('d');
 			expect(state).toBe('d');
 		});
 
-		test('async goto', async () => {
+		it('async goto', async () => {
 			const fsm = makeFsm(CONFIG);
 			const state = await fsm['async goto']('b');
 			expect(state).toBe('b');
 			expect(fsm.state()).toBe('b');
 		});
 
-		test('[b, c, d] -> a', () => {
+		it('[b, c, d] -> a', () => {
 			for (const init of ['b', 'c', 'd'] as const) {
 				const fsm = makeFsm({
 					...CONFIG,
@@ -101,18 +101,18 @@ describe('transitions', () => {
 	});
 
 	describe('errors', () => {
-		test('has pending transition', () => {
+		it('has pending transition', () => {
 			const fsm = makeFsm(CONFIG);
 			fsm['async goto']('b').catch(noop);
 			expect(fsm['a -> b']).toThrowErrorMatchingInlineSnapshot('[Error: [FSM]: Transition: "a -> b" can\'t be made. Has pending transtion: "async goto"]');
 		});
 
-		test("current state doesn't match transition.from", () => {
+		it("current state doesn't match transition.from", () => {
 			const fsm = makeFsm(CONFIG);
 			expect(fsm['b -> a']).toThrowErrorMatchingInlineSnapshot('[Error: [FSM]: Transition: "b -> a" is forbidden]');
 		});
 
-		test('invalid transition.to sync', () => {
+		it('invalid transition.to sync', () => {
 			const fsm = makeFsm(CONFIG);
 			expect(() =>
 				// @ts-expect-error for testing
@@ -121,7 +121,7 @@ describe('transitions', () => {
 			expect(fsm.state()).toBe('a');
 		});
 
-		test('invalid transition.to async', async () => {
+		it('invalid transition.to async', async () => {
 			const fsm = makeFsm(CONFIG);
 			await expect(() =>
 				// @ts-expect-error for testing
@@ -132,14 +132,14 @@ describe('transitions', () => {
 	});
 
 	describe('onError config', () => {
-		test('errors do not throw when onError is provided', () => {
+		it('errors do not throw when onError is provided', () => {
 			const onError = vitest.fn();
 			const fsm = makeFsm({ ...CONFIG, onError });
 			expect(() => fsm['b -> a']()).not.toThrow();
 			expect(onError).toHaveBeenCalledWith('Transition: "b -> a" is forbidden');
 		});
 
-		test('FSM state remains unchanged after handled error', () => {
+		it('FSM state remains unchanged after handled error', () => {
 			const onError = vitest.fn();
 			const fsm = makeFsm({ ...CONFIG, onError });
 			fsm['b -> a']();

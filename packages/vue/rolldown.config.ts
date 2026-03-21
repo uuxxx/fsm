@@ -1,11 +1,8 @@
-import { defineConfig, type InputOption } from 'rolldown';
+import { defineConfig } from 'rolldown';
 import { dts } from 'rolldown-plugin-dts';
 import { minify } from 'rollup-plugin-swc3';
 
-const INPUT: InputOption = {
-	index: 'lib/index.ts',
-	'history-plugin': 'lib/history-plugin.ts',
-};
+const INPUT = { index: 'src/index.ts' };
 
 export default defineConfig([
 	{
@@ -17,6 +14,7 @@ export default defineConfig([
 		transform: {
 			target: 'ES2015',
 		},
+		external: ['vue', '@uuxxx/fsm'],
 		plugins: [
 			minify({
 				compress: true,
@@ -33,6 +31,7 @@ export default defineConfig([
 			dir: 'dist',
 			format: 'es',
 		},
+		external: ['vue', '@uuxxx/fsm'],
 		plugins: [
 			dts({
 				newContext: true,

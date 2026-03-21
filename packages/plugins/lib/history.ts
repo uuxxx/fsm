@@ -1,7 +1,5 @@
 import type { Rec } from '@uuxxx/utils';
-import type { Label } from '../types/Label';
-import type { Plugin } from '../types/Plugin';
-import type { Transition } from '../types/Transition';
+import type { FsmLabel as Label, FsmPlugin as Plugin, FsmTransition as Transition } from '@uuxxx/fsm';
 
 /**
  * Plugin that tracks state history with pointer-based back/forward navigation.
@@ -16,7 +14,7 @@ import type { Transition } from '../types/Transition';
  * @example
  * ```ts
  * import { makeFsm } from '@uuxxx/fsm';
- * import { fsmHistoryPlugin } from '@uuxxx/fsm/history-plugin';
+ * import { fsmHistoryPlugin } from '@uuxxx/fsm-plugins';
  *
  * const fsm = makeFsm({
  *   init: 'a',
