@@ -2,7 +2,6 @@ import type { Rec } from '@uuxxx/utils';
 import { makeFsm } from '../lib/core/fsm';
 import type { Config } from '../lib/types/Config';
 import type { Transition } from '../lib/types/Transition';
-import { historyPlugin } from '../lib/plugins/history';
 
 type State = 'idle' | 'loading' | 'success' | 'error';
 
@@ -196,55 +195,6 @@ describe('types', () => {
 					},
 				},
 			});
-		});
-	});
-
-	describe('history plugin typing', () => {
-		test('history plugin methods are accessible under fsm.history', () => {
-			const plugin = historyPlugin<State, Transitions>();
-
-			const fsm = makeFsm({
-				...config,
-				plugins: [plugin],
-			});
-
-			expectTypeOf(fsm).toHaveProperty('history');
-			expectTypeOf(fsm.history.get).toBeFunction();
-			expectTypeOf(fsm.history.back).toBeFunction();
-			expectTypeOf(fsm.history.forward).toBeFunction();
-		});
-
-		test('history.get() returns typed state array', () => {
-			const plugin = historyPlugin<State, Transitions>();
-
-			const fsm = makeFsm({
-				...config,
-				plugins: [plugin],
-			});
-
-			expectTypeOf(fsm.history.get()).toEqualTypeOf<State[]>();
-		});
-
-		test('history.back() returns typed state', () => {
-			const plugin = historyPlugin<State, Transitions>();
-
-			const fsm = makeFsm({
-				...config,
-				plugins: [plugin],
-			});
-
-			expectTypeOf(fsm.history.back(1)).toEqualTypeOf<State>();
-		});
-
-		test('history.forward() returns typed state', () => {
-			const plugin = historyPlugin<State, Transitions>();
-
-			const fsm = makeFsm({
-				...config,
-				plugins: [plugin],
-			});
-
-			expectTypeOf(fsm.history.forward(1)).toEqualTypeOf<State>();
 		});
 	});
 

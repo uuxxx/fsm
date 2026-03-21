@@ -1,9 +1,6 @@
 import { tap, type Rec } from '@uuxxx/utils';
-import { makeFsm } from '../lib/core/fsm';
-import type { Config } from '../lib/types/Config';
-import type { Transition } from '../lib/types/Transition';
-import { historyPlugin } from '../lib/plugins/history';
-import { type Plugin } from '../lib/types/Plugin';
+import { makeFsm, type FsmConfig as Config, type FsmTransition as Transition, type FsmPlugin as Plugin } from '@uuxxx/fsm';
+import { historyPlugin } from '../lib/history';
 
 type State = 'leetcode.com' | 'google.com' | 'facebook.com' | 'youtube.com' | 'linkedin.com';
 
