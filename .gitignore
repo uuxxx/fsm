@@ -6,3 +6,4 @@ coverage
 # misc
 pnpm-debug.log*
 .DS_Store
+.claude/*

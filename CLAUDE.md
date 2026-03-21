@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Code guidelines
+
+- Always use utilities from `@uuxxx/utils` (`guard`, `tap`, `noop`, `wait`, `Rec`, `KeyOf`, `Entries`, etc.) and `@uuxxx/utils/event-emitter` instead of writing local duplicates. Do not add helpers that replicate functionality already provided by `@uuxxx/utils`.
+
 ## Project
 
 pnpm monorepo with four packages:
@@ -42,9 +46,53 @@ Heavy use of mapped types and generics. `Methods<TState, TTransitions, TPlugins>
 
 - **History plugin** (`history.ts`) — tracks state history with back/forward navigation. Published as `@uuxxx/fsm-plugins`.
 
-### External dependency
+### External dependency: `@uuxxx/utils`
 
-`@uuxxx/utils` provides type guards, event emitter, utility types (`KeyOf`, `Entries`, `Rec`), and functional helpers (`tap`, `noop`).
+Source: https://github.com/uuxxx/utils
+
+#### `@uuxxx/utils` (main entry point)
+
+**Functions:**
+
+- **`guard`** — object with type-guard predicates:
+  - `guard.nlx(value): value is null`
+  - `guard.ulx(value): value is undefined`
+  - `guard.nil(value): value is undefined | null`
+  - `guard.not.nlx<T>(value): value is Exclude<T, null>`
+  - `guard.not.ulx<T>(value): value is Exclude<T, undefined>`
+  - `guard.not.nil<T>(value): value is Exclude<T, undefined | null>`
+  - `guard.array<T>(value): value is T[]`
+  - `guard.string(value): value is string`
+  - `guard.function(value): value is AnyFn`
+  - `guard.promise<T>(value): value is Promise<T>`
+  - `guard.boolean(value): value is boolean`
+  - `guard.false(value): value is false`
+  - `guard.true(value): value is true`
+- **`noop`** — `() => void`, no-operation function.
+- **`tap`** — `<T>(value: T) => T`, identity function.
+- **`wait`** — `(delay: number) => Promise<void>`, setTimeout wrapper.
+
+**Types:**
+
+- **`AnyFn`** — `(...args: any[]) => any`
+- **`Noop`** — `() => void`
+- **`Rec<T = unknown>`** — `Record<string, T>`
+- **`Key`** — `string | number | symbol`
+- **`Vdx<T>`** — `T | void`
+- **`Ulx<T>`** — `T | undefined`
+- **`KeyOf<T extends Rec>`** — `keyof T`
+- **`ValueOf<T extends Rec>`** — `T[KeyOf<T>]`
+- **`EmptyArray`** — `[]`
+- **`Entries<T extends Rec>`** — union of `[K, T[K]]` tuples for each property in `T`
+
+#### `@uuxxx/utils/event-emitter` (sub-path export)
+
+- **`makeEventEmitter<T extends Rec<AnyFn>>()`** — factory creating a typed event emitter. `T` is an event map (keys = event names, values = listener signatures). Returns `EventEmitter<T>`.
+- **`EventEmitter<T>`** interface:
+  - `listen<K>(id: K, listener: T[K]) => Noop` — subscribe; returns unsubscribe function.
+  - `unlisten(id: KeyOf<T>, listener: Noop) => void` — remove a specific listener.
+  - `emit<K>(id: K, ...args: Parameters<T[K]>) => Array<ReturnType<T[K]>>` — emit event; returns array of non-undefined return values.
+  - `unlistenAll(id: KeyOf<T>) => void` — remove all listeners for an event.
 
 ## Build
 
