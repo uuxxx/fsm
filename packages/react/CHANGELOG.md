@@ -1,5 +1,11 @@
 # @uuxxx/fsm-react
 
+## 0.1.1
+
+### Patch Changes
+
+- d5c3f94: fix: typescript issues
+
 ## 0.1.0
 
 ### Minor Changes
