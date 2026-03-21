@@ -1,5 +1,11 @@
 # @uuxxx/fsm
 
+## 1.3.0
+
+### Minor Changes
+
+- 548595f: feat: init monorepo
+
 ## 1.2.4
 
 ### Patch Changes
