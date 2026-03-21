@@ -24,7 +24,7 @@ type State = 'idle' | 'loading' | 'success' | 'error';
 function App() {
 	const { state, start, succeed, fail, reset } = useFsm({
 		init: 'idle',
-		states: ['idle', 'loading', 'success', 'error'] as State[],
+		states: ['idle', 'loading', 'success', 'error'],
 		transitions: {
 			start: { from: 'idle', to: 'loading' },
 			succeed: { from: 'loading', to: 'success' },
@@ -76,7 +76,7 @@ Lifecycle hooks work the same as in the core library. The `onAfterTransition` ho
 function App() {
 	const fsm = useFsm({
 		init: 'idle',
-		states: ['idle', 'loading', 'done'] as ('idle' | 'loading' | 'done')[],
+		states: ['idle', 'loading', 'done'],
 		transitions: {
 			start: { from: 'idle', to: 'loading' },
 			finish: { from: 'loading', to: 'done' },
@@ -104,7 +104,7 @@ Async transitions work naturally with React. The component re-renders once the p
 function App() {
 	const { state, fetchData } = useFsm({
 		init: 'idle',
-		states: ['idle', 'loading', 'success', 'error'] as State[],
+		states: ['idle', 'loading', 'success', 'error'],
 		transitions: {
 			fetchData: {
 				from: 'idle',
@@ -136,7 +136,7 @@ import { fsmHistoryPlugin } from '@uuxxx/fsm-plugins';
 function App() {
 	const fsm = useFsm({
 		init: 'a',
-		states: ['a', 'b', 'c'] as ('a' | 'b' | 'c')[],
+		states: ['a', 'b', 'c'],
 		transitions: {
 			goto: { from: '*', to: (s: 'a' | 'b' | 'c') => s },
 		},

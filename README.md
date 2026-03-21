@@ -37,7 +37,7 @@ type State = 'idle' | 'loading' | 'success' | 'error';
 
 const fsm = makeFsm({
 	init: 'idle',
-	states: ['idle', 'loading', 'success', 'error'] as State[],
+	states: ['idle', 'loading', 'success', 'error'],
 	transitions: {
 		start: { from: 'idle', to: 'loading' },
 		succeed: { from: 'loading', to: 'success' },
@@ -64,7 +64,7 @@ import { useFsm } from '@uuxxx/fsm-react';
 function App() {
 	const { state, start, reset } = useFsm({
 		init: 'idle',
-		states: ['idle', 'loading', 'done'] as ('idle' | 'loading' | 'done')[],
+		states: ['idle', 'loading', 'done'],
 		transitions: {
 			start: { from: 'idle', to: 'loading' },
 			finish: { from: 'loading', to: 'done' },
@@ -90,7 +90,7 @@ import { useFsm } from '@uuxxx/fsm-vue';
 
 const { state, start, reset } = useFsm({
 	init: 'idle',
-	states: ['idle', 'loading', 'done'] as ('idle' | 'loading' | 'done')[],
+	states: ['idle', 'loading', 'done'],
 	transitions: {
 		start: { from: 'idle', to: 'loading' },
 		finish: { from: 'loading', to: 'done' },

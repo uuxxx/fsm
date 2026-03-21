@@ -32,7 +32,7 @@ type State = 'idle' | 'loading' | 'success' | 'error';
 
 const fsm = makeFsm({
 	init: 'idle',
-	states: ['idle', 'loading', 'success', 'error'] as State[],
+	states: ['idle', 'loading', 'success', 'error'],
 	transitions: {
 		start: {
 			from: 'idle',

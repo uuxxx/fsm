@@ -24,7 +24,7 @@ type State = 'idle' | 'loading' | 'success' | 'error';
 
 const { state, allStates, start, succeed, fail, reset } = useFsm({
 	init: 'idle',
-	states: ['idle', 'loading', 'success', 'error'] as State[],
+	states: ['idle', 'loading', 'success', 'error'],
 	transitions: {
 		start: { from: 'idle', to: 'loading' },
 		succeed: { from: 'loading', to: 'success' },
@@ -69,7 +69,7 @@ Lifecycle hooks work the same as in the core library. The `onAfterTransition` ho
 ```ts
 const fsm = useFsm({
 	init: 'idle',
-	states: ['idle', 'loading', 'done'] as State[],
+	states: ['idle', 'loading', 'done'],
 	transitions: {
 		start: { from: 'idle', to: 'loading' },
 		finish: { from: 'loading', to: 'done' },
@@ -112,7 +112,7 @@ import { fsmHistoryPlugin } from '@uuxxx/fsm-plugins';
 
 const fsm = useFsm({
 	init: 'a',
-	states: ['a', 'b', 'c'] as ('a' | 'b' | 'c')[],
+	states: ['a', 'b', 'c'],
 	transitions: {
 		goto: { from: '*', to: (s: 'a' | 'b' | 'c') => s },
 	},
