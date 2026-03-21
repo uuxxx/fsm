@@ -2,6 +2,7 @@ import type { AnyFn, Entries, Key, Rec, Vdx } from '@uuxxx/utils';
 import type { Transition } from './Transition';
 import type { Label } from './Label';
 
+/** Event object passed to lifecycle hooks during a transition. */
 export type Lifecycle<TState extends Label, TEntry extends [Key, Transition<Label>]> = {
 	args?: Parameters<Extract<TEntry[1]['to'], AnyFn>>;
 	transition: TEntry[0];
