@@ -1,31 +1,30 @@
 import { useRef, useSyncExternalStore } from 'react';
 import { makeFsm, type FsmConfig, type FsmLabel, type FsmPlugin, type FsmTransition } from '@uuxxx/fsm';
-import type { Rec } from '@uuxxx/utils';
+import type { Noop, Rec } from '@uuxxx/utils';
 
-export const useFsm = <TState extends FsmLabel, TTransitions extends Rec<FsmTransition<TState>>, TPlugins extends Array<FsmPlugin<TState, TTransitions>> = []>(
+export const useFsm = <TState extends FsmLabel, TTransitions extends Rec<FsmTransition<TState>>, TPlugins extends Array<FsmPlugin<TState, TTransitions>>>(
 	config: FsmConfig<TState, TTransitions, TPlugins>,
 ) => {
 	const storeRef = useRef<ReturnType<typeof createStore<TState, TTransitions, TPlugins>>>(undefined);
 	storeRef.current ??= createStore(config);
 
-	const { subscribe, getState, allStates, rest } = storeRef.current;
+	const { subscribe, getState, fsm } = storeRef.current;
 	const state = useSyncExternalStore(subscribe, getState);
 
 	return {
+		...fsm,
 		state,
-		allStates,
-		...rest,
 	};
 };
 
-function createStore<TState extends FsmLabel, TTransitions extends Rec<FsmTransition<TState>>, TPlugins extends Array<FsmPlugin<TState, TTransitions>> = []>(
+function createStore<TState extends FsmLabel, TTransitions extends Rec<FsmTransition<TState>>, TPlugins extends Array<FsmPlugin<TState, TTransitions>>>(
 	config: FsmConfig<TState, TTransitions, TPlugins>,
 ) {
 	let currentState: TState = config.init;
-	const listeners = new Set<() => void>();
+	const listeners = new Set<Noop>();
 	const userOnAfterTransition = config.methods?.onAfterTransition;
 
-	const fsm = makeFsm({
+	const fsm = makeFsm<TState, TTransitions, TPlugins>({
 		...config,
 		methods: {
 			...config.methods,
@@ -37,16 +36,12 @@ function createStore<TState extends FsmLabel, TTransitions extends Rec<FsmTransi
 		},
 	});
 
-	// eslint-disable-next-line no-unused-vars
-	const { state: _state, allStates, ...rest } = fsm;
-
 	return {
-		subscribe: (listener: () => void) => {
+		subscribe: (listener: Noop) => {
 			listeners.add(listener);
 			return () => listeners.delete(listener);
 		},
 		getState: () => currentState,
-		allStates: allStates(),
-		rest,
+		fsm,
 	};
 }

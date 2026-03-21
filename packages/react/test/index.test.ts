@@ -22,7 +22,7 @@ describe('useFsm', () => {
 
 	it('should return all states as a static array', () => {
 		const { result } = renderHook(() => useFsm({ init: 'a', states: STATES, transitions: TRANSITIONS }));
-		expect(result.current.allStates).toEqual(['a', 'b', 'c']);
+		expect(result.current.allStates()).toEqual(['a', 'b', 'c']);
 	});
 
 	it('should update state after sync transition', () => {

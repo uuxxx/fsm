@@ -52,7 +52,7 @@ A Vue composable that creates a reactive FSM instance. Accepts the same config a
 | Property             | Type                           | Description                                        |
 | -------------------- | ------------------------------ | -------------------------------------------------- |
 | `state`              | `Readonly<ShallowRef<TState>>` | Reactive current state — updates on transitions    |
-| `allStates`          | `TState[]`                     | Static array of all valid states                   |
+| `allStates()`        | `() => TState[]`               | Returns array of all valid states                  |
 | _transition methods_ | From config keys               | One method per transition, same signatures as core |
 | _plugin APIs_        | From plugin names              | One namespace per plugin                           |
 
