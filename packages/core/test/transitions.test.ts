@@ -134,16 +134,85 @@ describe('transitions', () => {
 	describe('onError config', () => {
 		it('errors do not throw when onError is provided', () => {
 			const onError = vitest.fn();
-			const fsm = makeFsm({ ...CONFIG, onError });
+			const fsm = makeFsm({ ...CONFIG, methods: { onError } });
 			expect(() => fsm['b -> a']()).not.toThrow();
 			expect(onError).toHaveBeenCalledWith('Transition: "b -> a" is forbidden');
 		});
 
 		it('FSM state remains unchanged after handled error', () => {
 			const onError = vitest.fn();
-			const fsm = makeFsm({ ...CONFIG, onError });
+			const fsm = makeFsm({ ...CONFIG, methods: { onError } });
 			fsm['b -> a']();
 			expect(fsm.state()).toBe('a');
+		});
+
+		it('onError receives lifecycle for invalid "to" (sync)', () => {
+			const onError = vitest.fn();
+			const fsm = makeFsm({ ...CONFIG, methods: { onError } });
+			// @ts-expect-error for testing
+			fsm.goto('invalid');
+			expect(onError).toHaveBeenCalledWith('Transition: "goto" can\'t be executed. It has invalid "to": "invalid"', { transition: 'goto', from: 'a', to: 'invalid', args: ['invalid'] });
+		});
+
+		it('onError receives lifecycle for invalid "to" (async)', async () => {
+			const onError = vitest.fn();
+			const fsm = makeFsm({ ...CONFIG, methods: { onError } });
+			// @ts-expect-error for testing
+			await fsm['async goto']('invalid');
+			expect(onError).toHaveBeenCalledWith('Transition: "async goto" can\'t be executed. It has invalid "to": "invalid"', { transition: 'async goto', from: 'a', to: 'invalid', args: ['invalid'] });
+		});
+
+		it('onError does not receive lifecycle for forbidden transition', () => {
+			const onError = vitest.fn();
+			const fsm = makeFsm({ ...CONFIG, methods: { onError } });
+			fsm['b -> a']();
+			expect(onError).toHaveBeenCalledTimes(1);
+			expect(onError.mock.calls[0]).toHaveLength(1);
+		});
+
+		it('onError does not receive lifecycle for pending transition', () => {
+			const onError = vitest.fn();
+			const fsm = makeFsm({ ...CONFIG, methods: { onError } });
+			fsm['async goto']('b').catch(noop);
+			fsm['a -> b']();
+			expect(onError).toHaveBeenCalledTimes(1);
+			expect(onError.mock.calls[0]).toHaveLength(1);
+		});
+	});
+
+	describe('onWarn config', () => {
+		it('onWarn is called on circular transition', () => {
+			const onWarn = vitest.fn();
+			const fsm = makeFsm({ ...CONFIG, methods: { onWarn } });
+			fsm.goto('a');
+			expect(onWarn).toHaveBeenCalledTimes(1);
+		});
+
+		it('onWarn receives message and lifecycle', () => {
+			const onWarn = vitest.fn();
+			const fsm = makeFsm({ ...CONFIG, methods: { onWarn } });
+			fsm.goto('a');
+			expect(onWarn.mock.calls[0][0]).toContain('circular');
+			expect(onWarn.mock.calls[0][1]).toEqual({
+				transition: 'goto',
+				from: 'a',
+				to: 'a',
+				args: ['a'],
+			});
+		});
+
+		it('state remains unchanged after circular transition', () => {
+			const onWarn = vitest.fn();
+			const fsm = makeFsm({ ...CONFIG, methods: { onWarn } });
+			fsm.goto('a');
+			expect(fsm.state()).toBe('a');
+		});
+
+		it('onWarn is not called on valid transition', () => {
+			const onWarn = vitest.fn();
+			const fsm = makeFsm({ ...CONFIG, methods: { onWarn } });
+			fsm.goto('b');
+			expect(onWarn).not.toHaveBeenCalled();
 		});
 	});
 });

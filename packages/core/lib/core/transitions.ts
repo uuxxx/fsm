@@ -22,7 +22,7 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 		register(name, transition) {
 			const checkIsOkAndChangeState = (lifecycle: Lifecycle<TState, Entries<TTransitions>>) => {
 				if (!allStates().includes(lifecycle.to)) {
-					eventEmitter.emit('error', `Transition: "${name as string}" can't be executed. It has invalid "to": "${lifecycle.to}"`);
+					eventEmitter.emit('error', `Transition: "${name as string}" can't be executed. It has invalid "to": "${lifecycle.to}"`, lifecycle);
 
 					return;
 				}
@@ -34,6 +34,7 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 						Transition: "${name as string}" is canceled because it's circular.
 						Current state is ${lifecycle.from}. Transition target state is ${lifecycle.to}
 					`,
+						lifecycle,
 					);
 
 					return;

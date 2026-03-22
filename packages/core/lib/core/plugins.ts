@@ -24,6 +24,9 @@ const makeBuilder = <TState extends Label, TTransitions extends Rec<Transition<T
 		onError(listener) {
 			return eventEmitter.listen('error', listener);
 		},
+		onWarn(listener) {
+			return eventEmitter.listen('warn', listener);
+		},
 		onBeforeTransition(listener) {
 			return eventEmitter.listen('onBeforeTransition', listener);
 		},

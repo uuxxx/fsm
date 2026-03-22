@@ -1,4 +1,4 @@
-import { type Rec, type Ulx } from '@uuxxx/utils';
+import { noop, type Rec, type Ulx } from '@uuxxx/utils';
 import { makeFsm } from '../lib/core/fsm';
 import type { Config } from '../lib/types/Config';
 import type { Transition } from '../lib/types/Transition';
@@ -160,7 +160,7 @@ describe('plugins', () => {
 
 			const fsm = makeFsm({
 				...CONFIG,
-				onError() {},
+				methods: { onError: noop },
 				plugins: [
 					(api) => {
 						api.onError(onErrorMock);
@@ -184,7 +184,7 @@ describe('plugins', () => {
 
 			const fsm = makeFsm({
 				...CONFIG,
-				onError() {},
+				methods: { onError: noop },
 				plugins: [
 					(api) => {
 						unsubscribe = api.onError(onErrorMock);
