@@ -1,5 +1,11 @@
 # @uuxxx/fsm
 
+## 1.4.0
+
+### Minor Changes
+
+- e916e5a: feat: extend methods api
+
 ## 1.3.1
 
 ### Patch Changes

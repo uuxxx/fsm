@@ -1,5 +1,12 @@
 # @uuxxx/fsm-plugins
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [e916e5a]
+  - @uuxxx/fsm@1.4.0
+
 ## 0.1.1
 
 ### Patch Changes

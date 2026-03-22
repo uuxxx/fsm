@@ -1,5 +1,12 @@
 # @uuxxx/fsm-react
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [e916e5a]
+  - @uuxxx/fsm@1.4.0
+
 ## 0.1.2
 
 ### Patch Changes
