@@ -12,10 +12,8 @@ export type Config<TState extends Label, TTransitions extends Rec<Transition<TSt
 	states: TState[];
 	/** Transition definitions. Each key becomes a method on the FSM instance. */
 	transitions: TTransitions;
-	/** Optional lifecycle hooks (`onBeforeTransition`, `onAfterTransition`). */
+	/** Optional lifecycle hooks (`onBeforeTransition`, `onAfterTransition`, `onError`). */
 	methods?: LifecycleMethods<TState, TTransitions>;
 	/** Optional plugins to extend the FSM with additional APIs. */
 	plugins?: TPlugins;
-	/** Custom error handler. By default, errors throw with a `[FSM]:` prefix. */
-	onError?: (msg: string) => void;
 };

@@ -39,7 +39,9 @@ export const makeFsm = <TState extends Label, TTransitions extends Rec<Transitio
 	const states = config.states.includes(config.init) ? [...config.states] : [...config.states, config.init];
 	const eventEmitter = makeEventEmitter<TState, TTransitions>();
 
-	Object.entries(config.methods ?? {}).forEach(([name, method]) => {
+	const { onError, onWarn, ...lifecycleMethods } = config.methods ?? {};
+
+	Object.entries(lifecycleMethods).forEach(([name, method]) => {
 		eventEmitter.listen(name as KeyOf<LifecycleMethods<TState, TTransitions>>, method);
 	});
 
@@ -49,11 +51,15 @@ export const makeFsm = <TState extends Label, TTransitions extends Rec<Transitio
 
 	eventEmitter.listen(
 		'error',
-		config.onError ??
+		onError ??
 			((msg) => {
 				throw new Error(`[FSM]: ${msg}`);
 			}),
 	);
+
+	if (onWarn) {
+		eventEmitter.listen('warn', onWarn);
+	}
 
 	const stateMethods: StateMethods<TState> = {
 		state: () => state,

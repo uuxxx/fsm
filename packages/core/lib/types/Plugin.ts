@@ -1,15 +1,16 @@
-import type { AnyFn, KeyOf, Noop, Rec } from '@uuxxx/utils';
+import type { AnyFn, Entries, KeyOf, Noop, Rec } from '@uuxxx/utils';
 import type { Label } from './Label';
-import type { LifecycleMethods } from './LifecycleMethods';
+import type { Lifecycle, LifecycleMethods } from './LifecycleMethods';
 import type { StateMethods } from './StateMethods';
 import type { Transition } from './Transition';
 
 /** API object passed to each plugin during registration. Provides state access, lifecycle hooks, and error listeners. */
 export type ApiForPlugin<TState extends Label, TTransitions extends Rec<Transition<TState>>> = {
 	init: (listener: (state: TState) => void) => void;
-	onError: (listener: (msg: string) => void) => Noop;
+	onError: (listener: (msg: string, lifecycle?: Lifecycle<TState, Entries<TTransitions>>) => void) => Noop;
+	onWarn: (listener: (msg: string, lifecycle: Lifecycle<TState, Entries<TTransitions>>) => void) => Noop;
 } & StateMethods<TState> & {
-		[K in KeyOf<LifecycleMethods<TState, TTransitions>>]-?: (listener: LifecycleMethods<TState, TTransitions>[K]) => Noop;
+		[K in Exclude<KeyOf<LifecycleMethods<TState, TTransitions>>, 'onError' | 'onWarn'>]-?: (listener: LifecycleMethods<TState, TTransitions>[K]) => Noop;
 	};
 
 type PluginApi = {

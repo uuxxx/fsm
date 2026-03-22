@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Code guidelines
 
 - Always use utilities from `@uuxxx/utils` (`guard`, `tap`, `noop`, `wait`, `Rec`, `KeyOf`, `Entries`, etc.) and `@uuxxx/utils/event-emitter` instead of writing local duplicates. Do not add helpers that replicate functionality already provided by `@uuxxx/utils`.
+- Always cover new or changed functionality with tests. When adding a feature, write tests that verify the happy path and relevant edge cases. When modifying existing behavior, update or add tests to reflect the changes. Do not consider a task complete until tests pass.
 
 ## Project
 

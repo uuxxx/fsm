@@ -17,4 +17,6 @@ type CancelableLifecycleMethod<TState extends Label, TTransitions extends Rec<Tr
 export type LifecycleMethods<TState extends Label, TTransitions extends Rec<Transition<TState>>> = {
 	onBeforeTransition?: CancelableLifecycleMethod<TState, TTransitions>;
 	onAfterTransition?: LifecycleMethod<TState, TTransitions>;
+	onError?: (msg: string, lifecycle?: Lifecycle<TState, Entries<TTransitions>>) => void;
+	onWarn?: (msg: string, lifecycle: Lifecycle<TState, Entries<TTransitions>>) => void;
 };
