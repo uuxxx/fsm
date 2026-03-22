@@ -1,1 +1,1 @@
-export { historyPlugin as fsmHistoryPlugin } from './history';
+export * from './history';

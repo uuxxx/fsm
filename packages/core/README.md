@@ -285,11 +285,13 @@ Plugin names must be unique — registering two plugins with the same name trigg
 
 ### History Plugin
 
-Tracks state history with pointer-based navigation.
+Read-only state history tracking with pointer-based navigation.
+
+`back()` and `forward()` move an internal pointer and return the state at that position — they do **not** change the FSM state. Use transition methods to actually navigate (e.g. `fsm.goto(fsm.history.back(1))`).
 
 ```typescript
 import { makeFsm } from '@uuxxx/fsm';
-import { fsmHistoryPlugin } from '@uuxxx/fsm/history-plugin';
+import { historyPlugin } from '@uuxxx/fsm-plugins/history';
 
 const fsm = makeFsm({
 	init: 'a',
@@ -297,27 +299,31 @@ const fsm = makeFsm({
 	transitions: {
 		goto: { from: '*', to: (s: 'a' | 'b' | 'c') => s },
 	},
-	plugins: [fsmHistoryPlugin()],
+	plugins: [historyPlugin()],
 });
 
 fsm.goto('b');
 fsm.goto('c');
-fsm.history.get(); // ['a', 'b', 'c']
+fsm.history.get(); // ['a', 'b', 'c'] (returns a copy)
 
-fsm.history.back(1); // returns 'b'
-fsm.history.back(1); // returns 'a'
-fsm.history.forward(2); // returns 'c'
+fsm.history.back(1); // returns 'b' (pointer moved, FSM state unchanged)
+fsm.history.current(); // 'b'
+fsm.history.canBack(); // true
+fsm.history.canForward(); // true
+fsm.history.forward(1); // returns 'c'
+fsm.goto(fsm.history.current()); // actually transition to 'c'
 ```
 
 #### History API
 
-| Method                       | Returns    | Description                                                                        |
-| ---------------------------- | ---------- | ---------------------------------------------------------------------------------- |
-| `fsm.history.get()`          | `TState[]` | Full history array                                                                 |
-| `fsm.history.back(steps)`    | `TState`   | Move pointer back by `steps`, returns the state at that position. Clamps to start  |
-| `fsm.history.forward(steps)` | `TState`   | Move pointer forward by `steps`, returns the state at that position. Clamps to end |
-
-> **Note:** `back()` and `forward()` move the internal history pointer and return the state at that position. They do **not** trigger a state transition on the FSM — use transition methods if you need to change the actual FSM state.
+| Method                       | Returns    | Description                                                                                                     |
+| ---------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------- |
+| `fsm.history.get()`          | `TState[]` | Returns a copy of the full history array                                                                        |
+| `fsm.history.current()`      | `TState`   | Returns the state at the current pointer position                                                               |
+| `fsm.history.back(steps)`    | `TState`   | Move pointer back by `steps`, returns the state at that position. Clamps to start. Ignores non-positive values  |
+| `fsm.history.forward(steps)` | `TState`   | Move pointer forward by `steps`, returns the state at that position. Clamps to end. Ignores non-positive values |
+| `fsm.history.canBack()`      | `boolean`  | Whether the pointer can move back (pointer > 0)                                                                 |
+| `fsm.history.canForward()`   | `boolean`  | Whether the pointer can move forward (pointer < end)                                                            |
 
 When a transition occurs, any forward history after the current pointer is discarded (like browser navigation).
 

@@ -2,7 +2,7 @@ import { defineConfig } from 'rolldown';
 import { dts } from 'rolldown-plugin-dts';
 import { minify } from 'rollup-plugin-swc3';
 
-const INPUT = { index: 'lib/index.ts' };
+const INPUT = { index: 'lib/index.ts', history: 'lib/history/index.ts' };
 
 export default defineConfig([
 	{

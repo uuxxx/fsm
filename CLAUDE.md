@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 pnpm monorepo with four packages:
 
 - `@uuxxx/fsm` (`packages/core/`) — lightweight, type-safe finite state machine library for TypeScript/JavaScript
-- `@uuxxx/fsm-plugins` (`packages/plugins/`) — official plugins (history plugin with back/forward navigation)
+- `@uuxxx/fsm-plugins` (`packages/plugins/`) — official plugins (history). Each plugin lives in its own directory and builds to a separate file. Sub-path exports: `@uuxxx/fsm-plugins/history`
 - `@uuxxx/fsm-react` (`packages/react/`) — React bindings (stub)
 - `@uuxxx/fsm-vue` (`packages/vue/`) — Vue bindings (stub)
 
@@ -44,7 +44,9 @@ Heavy use of mapped types and generics. `Methods<TState, TTransitions, TPlugins>
 
 ### Plugins (`packages/plugins/lib/`)
 
-- **History plugin** (`history.ts`) — tracks state history with back/forward navigation. Published as `@uuxxx/fsm-plugins`.
+Each plugin lives in its own directory (`lib/<name>/index.ts`) and builds to a separate output file (`dist/<name>.js`).
+
+- **History plugin** (`history/index.ts`) — read-only state history tracking with pointer-based back/forward navigation. `back()`/`forward()` move the pointer but do not change FSM state.
 
 ### External dependency: `@uuxxx/utils`
 
