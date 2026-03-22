@@ -155,11 +155,11 @@ const fsm = makeFsm({
 Plugins add namespaced methods to the FSM instance.
 
 ```typescript
-import { fsmHistoryPlugin } from '@uuxxx/fsm-plugins';
+import { historyPlugin } from '@uuxxx/fsm-plugins/history';
 
 const fsm = makeFsm({
 	// ...config
-	plugins: [fsmHistoryPlugin()],
+	plugins: [historyPlugin()],
 });
 
 fsm.goto('b');

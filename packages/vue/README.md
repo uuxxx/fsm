@@ -108,7 +108,7 @@ watch(state, (newState, oldState) => {
 
 ```ts
 import { useFsm } from '@uuxxx/fsm-vue';
-import { fsmHistoryPlugin } from '@uuxxx/fsm-plugins';
+import { historyPlugin } from '@uuxxx/fsm-plugins/history';
 
 const fsm = useFsm({
 	init: 'a',
@@ -116,7 +116,7 @@ const fsm = useFsm({
 	transitions: {
 		goto: { from: '*', to: (s: 'a' | 'b' | 'c') => s },
 	},
-	plugins: [fsmHistoryPlugin()],
+	plugins: [historyPlugin()],
 });
 
 fsm.goto('b');

@@ -291,7 +291,7 @@ Read-only state history tracking with pointer-based navigation.
 
 ```typescript
 import { makeFsm } from '@uuxxx/fsm';
-import { fsmHistoryPlugin } from '@uuxxx/fsm-plugins';
+import { historyPlugin } from '@uuxxx/fsm-plugins/history';
 
 const fsm = makeFsm({
 	init: 'a',
@@ -299,7 +299,7 @@ const fsm = makeFsm({
 	transitions: {
 		goto: { from: '*', to: (s: 'a' | 'b' | 'c') => s },
 	},
-	plugins: [fsmHistoryPlugin()],
+	plugins: [historyPlugin()],
 });
 
 fsm.goto('b');

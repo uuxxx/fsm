@@ -131,7 +131,7 @@ function App() {
 
 ```tsx
 import { useFsm } from '@uuxxx/fsm-react';
-import { fsmHistoryPlugin } from '@uuxxx/fsm-plugins';
+import { historyPlugin } from '@uuxxx/fsm-plugins/history';
 
 function App() {
 	const fsm = useFsm({
@@ -140,7 +140,7 @@ function App() {
 		transitions: {
 			goto: { from: '*', to: (s: 'a' | 'b' | 'c') => s },
 		},
-		plugins: [fsmHistoryPlugin()],
+		plugins: [historyPlugin()],
 	});
 
 	return (

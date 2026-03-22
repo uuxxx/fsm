@@ -21,13 +21,14 @@ import type { FsmLabel as Label, FsmPlugin as Plugin, FsmTransition as Transitio
  * @example
  * ```ts
  * import { makeFsm } from '@uuxxx/fsm';
- * import { fsmHistoryPlugin } from '@uuxxx/fsm-plugins';
+ * import { historyPlugin } from '@uuxxx/fsm-plugins';
+ * // or: import { historyPlugin } from '@uuxxx/fsm-plugins/history';
  *
  * const fsm = makeFsm({
  *   init: 'a',
  *   states: ['a', 'b', 'c'],
  *   transitions: { goto: { from: '*', to: (s: 'a' | 'b' | 'c') => s } },
- *   plugins: [fsmHistoryPlugin()],
+ *   plugins: [historyPlugin()],
  * });
  *
  * fsm.goto('b');
