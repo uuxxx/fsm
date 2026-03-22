@@ -1,5 +1,13 @@
 # @uuxxx/fsm-react
 
+## 0.1.2
+
+### Patch Changes
+
+- 432ca26: refactor: plugins
+- Updated dependencies [432ca26]
+  - @uuxxx/fsm@1.3.1
+
 ## 0.1.1
 
 ### Patch Changes
