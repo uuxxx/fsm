@@ -26,6 +26,14 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"default": "./dist/index.js"
+		},
+		"./history": {
+			"types": "./dist/history.d.ts",
+			"default": "./dist/history.js"
+		},
+		"./logger": {
+			"types": "./dist/logger.d.ts",
+			"default": "./dist/logger.js"
 		}
 	},
 	"publishConfig": {

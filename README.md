@@ -155,17 +155,19 @@ const fsm = makeFsm({
 Plugins add namespaced methods to the FSM instance.
 
 ```typescript
-import { fsmHistoryPlugin } from '@uuxxx/fsm-plugins';
+import { historyPlugin } from '@uuxxx/fsm-plugins/history';
 
 const fsm = makeFsm({
 	// ...config
-	plugins: [fsmHistoryPlugin()],
+	plugins: [historyPlugin()],
 });
 
 fsm.goto('b');
 fsm.goto('c');
 fsm.history.get(); // ['a', 'b', 'c']
-fsm.history.back(1); // 'b'
+fsm.history.back(1); // 'b' (moves pointer, does NOT change FSM state)
+fsm.history.canBack(); // true
+fsm.history.current(); // 'b'
 ```
 
 See the [core docs](./packages/core) for the full API reference, including error handling, plugin authoring, and exported types.

@@ -108,7 +108,7 @@ watch(state, (newState, oldState) => {
 
 ```ts
 import { useFsm } from '@uuxxx/fsm-vue';
-import { fsmHistoryPlugin } from '@uuxxx/fsm-plugins';
+import { historyPlugin } from '@uuxxx/fsm-plugins/history';
 
 const fsm = useFsm({
 	init: 'a',
@@ -116,7 +116,7 @@ const fsm = useFsm({
 	transitions: {
 		goto: { from: '*', to: (s: 'a' | 'b' | 'c') => s },
 	},
-	plugins: [fsmHistoryPlugin()],
+	plugins: [historyPlugin()],
 });
 
 fsm.goto('b');
@@ -124,7 +124,9 @@ fsm.goto('c');
 
 fsm.state.value; // 'c'
 fsm.history.get(); // ['a', 'b', 'c']
-fsm.history.back(1); // 'b'
+fsm.history.back(1); // 'b' (pointer moved, FSM state unchanged)
+fsm.history.canBack(); // true
+fsm.goto(fsm.history.current()); // actually transition to 'b'
 ```
 
 ## Exports
