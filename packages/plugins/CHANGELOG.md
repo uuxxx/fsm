@@ -1,5 +1,16 @@
 # @uuxxx/fsm-plugins
 
+## 0.2.0
+
+### Minor Changes
+
+- ba83aeb: feat: add logger plugin
+
+### Patch Changes
+
+- Updated dependencies [ba83aeb]
+  - @uuxxx/fsm@1.3.1
+
 ## 0.1.0
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # @uuxxx/fsm-react
 
+## 0.1.2
+
+### Patch Changes
+
+- ba83aeb: feat: add logger plugin
+- Updated dependencies [ba83aeb]
+  - @uuxxx/fsm@1.3.1
+
 ## 0.1.1
 
 ### Patch Changes

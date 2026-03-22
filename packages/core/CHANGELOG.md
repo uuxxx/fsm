@@ -1,5 +1,11 @@
 # @uuxxx/fsm
 
+## 1.3.1
+
+### Patch Changes
+
+- ba83aeb: feat: add logger plugin
+
 ## 1.3.0
 
 ### Minor Changes
